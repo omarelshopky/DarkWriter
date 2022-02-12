@@ -4,68 +4,60 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import * 
 import sys
 from ctypes import windll
-import time
-  
+
+
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.user32 = windll.user32
-
-        # this will hide the title bar
-        self.setWindowFlag(Qt.FramelessWindowHint)
+        # Hide the titlebar
+        self.setWindowFlag(Qt.FramelessWindowHint) 
+        
+        # Make the window always the top
+        self.setWindowFlag(Qt.WindowStaysOnTopHint)
 
         # setting title
         self.setWindowTitle("Python ")
   
-        # setting geometry
+        # Setting Window full screen according to the screen size
+        self.user32 = windll.user32
         self.setGeometry(0, 0, self.user32.GetSystemMetrics(0), self.user32.GetSystemMetrics(1))
   
         # calling method
         self.UiComponents()
   
-        # showing all the widgets
+        # Showing all the widgets
         self.show()
   
-    # method for widgets
+
+    # Build the widgets
     def UiComponents(self):
   
-        # creating label
-        label = QLabel("Dark", self)
-  
-        # setting geometry to label
-        label.setGeometry(100, 100, 120, 40)
-  
-        # adding border to label
-        label.setStyleSheet("border : 2px solid black")
-  
-        # opening window in maximized size
-        # self.showMaximized()
-  
-  
-# create pyqt5 app
-App = QApplication(sys.argv)
-  
-# create the instance of our Window
-window = Window()
-  
-# get the handle to the taskbar
-h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
+        button = QPushButton("Close", self)
+        button.setGeometry(500, 500, 100, 50)
+        button.setStyleSheet("border : 2px solid black") # adding border to label
+        button.clicked.connect(lambda:self._close())
 
-# hide the taskbar
-windll.user32.ShowWindow(h, 9)
-# start the app
-sys.exit(App.exec())
+    def _close(self):
+        self.close()
 
+  
+  
+def main():
+    App = QApplication(sys.argv)
+    window = Window()
+    sys.exit(App.exec())
 
+	
+if __name__ == '__main__':
+   main()
 
 
 # get the handle to the taskbar
-h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
+# h = windll.user32.FindWindowA(b'Shell_TrayWnd', None)
 
 # hide the taskbar
-windll.user32.ShowWindow(h, 0)
+# windll.user32.ShowWindow(h, 0)
 
-# time.sleep(10)
-# show the taskbar again
-windll.user32.ShowWindow(h, 9)
+# # show the taskbar again
+# windll.user32.ShowWindow(h, 9)
