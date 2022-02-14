@@ -5,17 +5,19 @@ from PyQt5.uic import loadUi
 import sys
 from ctypes import windll
 from optionWindowUI import Ui_optionWindow
+import keyboard
 
 
+    
 class StackWidget(QStackedWidget):
     def __init__(self):
         super().__init__()
 
         # Hide the titlebar
-        # self.setWindowFlag(Qt.FramelessWindowHint) 
+        self.setWindowFlag(Qt.FramelessWindowHint) 
             
         # Make the window always the top
-        # self.setWindowFlag(Qt.WindowStaysOnTopHint)
+        self.setWindowFlag(Qt.WindowStaysOnTopHint)
 
         # Setting Window full screen according to the screen size
         user32 = windll.user32
@@ -34,27 +36,19 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         super().__init__()
         self.mainWidget = widget
         self.setupUi(self)
-        self.showMaximized()
-        #loadUi('file', self)
-        # self.UiComponents()
+        self.UiComponentsLogic()
         self.show()
+        #loadUi('file', self)
   
   
-
-    # Build the widgets
-    def UiComponents(self):
-        
-        self.setLayout()
-        button = QPushButton("Close", self)
-        button.setGeometry(100, 100, 100, 50)
-        button.setStyleSheet("border : 2px solid black") # adding border to label
-        button.clicked.connect(lambda:self._close())
+    def UiComponentsLogic(self):
+        # Closes the app when quit button pressed
+        self.odQuitBtn.clicked.connect(lambda:self.closeApp())
+        self.ndQuitBtn.clicked.connect(lambda:self.closeApp())
 
 
-
-
-    # Close the Window
-    def _close(self):
+    # Close the app
+    def closeApp(self):
         self.close()
         self.mainWidget.close()
 
@@ -62,6 +56,11 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
 
   
 def main():
+    # Block hot keys
+    keyboard.remap_key('windows', 'shift')
+    keyboard.remap_key('tab', 'shift')
+    keyboard.remap_key('ctrl', 'shift')
+
     App = QApplication(sys.argv)
 
     mainWidget = StackWidget()
