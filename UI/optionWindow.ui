@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1027</width>
-    <height>703</height>
+    <width>1033</width>
+    <height>709</height>
    </rect>
   </property>
   <property name="palette">
@@ -416,7 +416,7 @@ QTabWidget::tab-bar:top {
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="iconSize">
            <size>
@@ -449,7 +449,7 @@ QTabWidget::tab-bar:top {
            <attribute name="title">
             <string>                 New Draft                  </string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
+           <layout class="QVBoxLayout" name="ndCentralLayout">
             <item>
              <layout class="QVBoxLayout" name="ndMainLayoutV" stretch="0,0,0,0,7,0,7,0,7,0">
               <property name="spacing">
@@ -514,7 +514,7 @@ QTabWidget::tab-bar:top {
               <item>
                <layout class="QHBoxLayout" name="ndBlockInputLayoutH" stretch="5,4,2,5">
                 <item>
-                 <spacer name="ncBlockInputSpacerL">
+                 <spacer name="ndBlockInputSpacerL">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -576,7 +576,7 @@ QTabWidget::tab-bar:top {
               <item>
                <layout class="QHBoxLayout" name="ndBlockInputLayoutH_3" stretch="5,0,5">
                 <item>
-                 <spacer name="ncBlockInputSpacerL_3">
+                 <spacer name="ndBlockInputSpacerL_3">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -589,9 +589,9 @@ QTabWidget::tab-bar:top {
                  </spacer>
                 </item>
                 <item>
-                 <layout class="QVBoxLayout" name="radioLayoutV">
+                 <layout class="QVBoxLayout" name="ndRadioLayoutV">
                   <item>
-                   <widget class="QRadioButton" name="wordRadioBtn">
+                   <widget class="QRadioButton" name="ndWordRadioBtn">
                     <property name="font">
                      <font>
                       <pointsize>9</pointsize>
@@ -606,7 +606,7 @@ QTabWidget::tab-bar:top {
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="mntRadioBtn">
+                   <widget class="QRadioButton" name="ndMntRadioBtn">
                     <property name="font">
                      <font>
                       <pointsize>9</pointsize>
@@ -621,7 +621,7 @@ QTabWidget::tab-bar:top {
                    </widget>
                   </item>
                   <item>
-                   <widget class="QRadioButton" name="freeRadioBtn">
+                   <widget class="QRadioButton" name="ndFreeRadioBtn">
                     <property name="font">
                      <font>
                       <pointsize>9</pointsize>
@@ -681,7 +681,7 @@ QTabWidget::tab-bar:top {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="quitBtn">
+                 <widget class="QPushButton" name="ndQuitBtn">
                   <property name="font">
                    <font>
                     <family>MS Shell Dlg 2</family>
@@ -707,7 +707,7 @@ QTabWidget::tab-bar:top {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="startBtn">
+                 <widget class="QPushButton" name="ndStartBtn">
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
@@ -758,6 +758,338 @@ QTabWidget::tab-bar:top {
            <attribute name="title">
             <string>                 Open Draft                  </string>
            </attribute>
+           <layout class="QHBoxLayout" name="odCentralLayout">
+            <item>
+             <layout class="QVBoxLayout" name="odMainLayoutH" stretch="0,0,0,7,0,7,0,7,0">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <spacer name="odMainSpacer1">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="odFileLayout" stretch="2,10,1,3,2">
+                <item>
+                 <spacer name="odFileSpacerL">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="odFilePathTxt"/>
+                </item>
+                <item>
+                 <spacer name="odFileSpacerM">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="odBrowseBtn">
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Browse...</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="odFileSpacerR">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="odMainSpacer2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="odBlockInputLayoutH" stretch="5,4,2,5">
+                <item>
+                 <spacer name="odBlockInputSpacerL">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="odBlockInputLbl">
+                  <property name="font">
+                   <font>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Block everthing until:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLineEdit" name="odBlockInput">
+                  <property name="frame">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="odBlockInputSpacerR">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="odMainSpacer3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="odBlockInputLayoutH_2" stretch="5,0,5">
+                <item>
+                 <spacer name="odBlockInputSpacerL_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="odRadioLayoutV">
+                  <item>
+                   <widget class="QRadioButton" name="odWordRadioBtn">
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Words are typed.</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="odmntRadioBtn">
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Minutes from now.</string>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="odFreeRadioBtn">
+                    <property name="font">
+                     <font>
+                      <pointsize>9</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Don't block me.</string>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <spacer name="odBlockInputSpacerR_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="odMainSpacer4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="odBtnLayoutH" stretch="6,0,0,0,6">
+                <item>
+                 <spacer name="ddBtnSpacerL">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="odQuitBtn">
+                  <property name="font">
+                   <font>
+                    <family>MS Shell Dlg 2</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Quit</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="ddBtnSpacerM">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="odStartBtn">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>MS Shell Dlg 2</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Start</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="odBtnSpacerR">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <spacer name="odMainSpacer5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
