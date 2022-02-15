@@ -1,14 +1,15 @@
 from PyQt5.QtWidgets import * 
 from PyQt5.QtGui import * 
 from PyQt5.QtCore import * 
-from PyQt5.uic import loadUi
-import sys
 from ctypes import windll
-from optionWindowUI import Ui_optionWindow
+import sys
 import keyboard
+from OptionWindow import OptionWindow
+from WritingWindow import WritingWindow
+
+from PyQt5.uic import loadUi
 
 
-    
 class StackWidget(QStackedWidget):
     def __init__(self):
         super().__init__()
@@ -27,34 +28,11 @@ class StackWidget(QStackedWidget):
 
         # Add the startup window and show
         self.addWidget(OptionWindow(self))
+        self.addWidget(WritingWindow(self))
         self.show()
 
 
 
-class OptionWindow(QMainWindow, Ui_optionWindow):
-    def __init__(self, widget):
-        super().__init__()
-        self.mainWidget = widget
-        self.setupUi(self)
-        self.UiComponentsLogic()
-        self.show()
-        #loadUi('file', self)
-  
-  
-    def UiComponentsLogic(self):
-        # Closes the app when quit button pressed
-        self.odQuitBtn.clicked.connect(lambda:self.closeApp())
-        self.ndQuitBtn.clicked.connect(lambda:self.closeApp())
-
-
-    # Close the app
-    def closeApp(self):
-        self.close()
-        self.mainWidget.close()
-
-
-
-  
 def main():
     # Block hot keys
     keyboard.remap_key('windows', 'shift')
@@ -68,9 +46,6 @@ def main():
     sys.exit(App.exec())
 
 	
+
 if __name__ == '__main__':
    main()
-
-
-# fname=QFileDialog.getOpenFileName(self, 'Open file', 'D:\codefirst.io\PyQt5 tutorials\Browse Files', 'Images (*.png, *.xmp *.jpg)')
-# self.filename.setText(fname[0])
