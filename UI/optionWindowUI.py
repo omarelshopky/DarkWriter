@@ -426,7 +426,7 @@ class Ui_optionWindow(object):
         optionWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(optionWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(optionWindow)
 
     def retranslateUi(self, optionWindow):
