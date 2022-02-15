@@ -12,8 +12,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
   
 
     def UiComponentsEvent(self):
-        # Closes the app when quit button pressed
-        self.saveAndQuitBtn.clicked.connect(lambda:self.closeApp())
+        # Saves the file and Closes the app 
+        self.saveAndQuitBtn.clicked.connect(lambda:self.saveAndQuit())
     
         # Block additional 10min
         self.snoozeBtn.clicked.connect(lambda:self.addSnooze())
@@ -34,7 +34,10 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     # Start All needed timers
     def startTimers(self):
         self.progressTimer = QTimer()
+        self.progressTimer.timeout.connect(lambda: self.stopProgressTimer())
         self.updateProgressTimer = QTimer()
+        self.updateProgressTimer.timeout.connect(lambda: self.stopUpdateProgressTimer())
+        
         self.activateProgressBar()
 
 
@@ -45,9 +48,10 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         if self.blockingAmount != 0:
             self.startUpdateProgressTimer()
 
+
     def startUpdateProgressTimer(self):
         self.updateProgressTimer.start(1000)
-        self.updateProgressTimer.timeout.connect(lambda: self.stopUpdateProgressTimer())
+        
 
 
     # Update the progress color and value and restart the timer if not 100%
@@ -100,7 +104,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def startProgressTimer(self, timeInMin):
         self.progressTimer.start(int(timeInMin) * 60000)
-        self.progressTimer.timeout.connect(lambda: self.stopProgressTimer())
         self.hideEndSessionBtns()
 
 
@@ -124,10 +127,14 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.progressBar.setValue(0)
 
 
+    def saveAndQuit(self):
+        filePath = self.saveFile()
+        self.displayMessage(filePath)
+        self.closeApp()
+
+
     # Close the app
     def closeApp(self):
-        self.saveFile()
-
         self.close()
         self.mainWidget.close()
 
@@ -136,10 +143,20 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     def saveFile(self):
         fname = QFileDialog.getSaveFileName(self, 'Save File', self.filePath, 'Text Files (*.txt)')
 
+        return fname[0]
+
+
+    # Display a dialog Message when successfulley saved
+    def displayMessage(self, filePath):
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Well Done!")
+        dlg.setText(f"Your draft was successfully saved here\n\n{filePath}")
+        button = dlg.exec()
+        return button == QMessageBox.Ok
+
 
     # Block additional 10 minutes
     def addSnooze(self):
         self.setBlocking(1, True)
         self.activateProgressBar()
         
-
