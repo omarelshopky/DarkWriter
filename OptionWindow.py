@@ -30,10 +30,13 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         # Browse button event
         self.odBrowseBtn.clicked.connect(lambda:self.browseFile())
 
-        # Radion Buttons event
+        # Enable Start writing without blocking
         self.ndFreeRadioBtn.toggled.connect(lambda:self.enableFreeStart())
         self.odFreeRadioBtn.toggled.connect(lambda:self.enableFreeStart())
         self.odFilePathTxt.textChanged.connect(lambda:self.enableFreeStart())
+
+        # 
+        self.ndBlockInput.textChanged.connect(lambda:self.enableBlockedStart())
 
 
 
@@ -73,13 +76,24 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         else:           # Open Draft Tab
             if self.odFreeRadioBtn.isChecked() and self.odFilePathTxt.text() != '':
                 self.odStartBtn.setEnabled(True)
+            else:
+                self.odStartBtn.setEnabled(False)
 
         self.blockingInTime = True
         self.blockingAmount = 0
 
 
     def enableBlockedStart(self):
-        pass
+
+        if self.tabWidget.currentIndex() == 0:  # New Draft Tab
+            if self.ndBlockInput.text() != '':
+                self.ndStartBtn.setEnabled(True)
+            else:
+                self.ndStartBtn.setEnabled(False)
+
+        else:           # Open Draft Tab
+            pass
+
 
 
 class PathSolver():
