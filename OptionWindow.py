@@ -1,18 +1,24 @@
 from UI.optionWindowUI import Ui_optionWindow
 from PyQt5.QtWidgets import * 
+from PyQt5.QtGui import * 
+import os
+from datetime import datetime
 
 
 class OptionWindow(QMainWindow, Ui_optionWindow):
+
     def __init__(self, widget):
         super().__init__()
         self.mainWidget = widget
         self.setupUi(self)
-        self.UiComponentsLogic()
-        self.show()
-        #loadUi('file', self)
+        self.UiComponentsEvent()
+        self.pathSolver = PathSolver()
+
   
-  
-    def UiComponentsLogic(self):
+    # Set up all events in the UI components
+    def UiComponentsEvent(self):
+        self.enableInputValidation()
+
         # Open writing window
         self.ndStartBtn.clicked.connect(lambda:self.openWrintingWindow())
         self.odStartBtn.clicked.connect(lambda:self.openWrintingWindow())
@@ -25,16 +31,24 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         self.odBrowseBtn.clicked.connect(lambda:self.browseFile())
 
         # Radion Buttons event
-        self.ndWordRadioBtn.toggled.connect(lambda:self.handleRadioButton())
-        self.ndMntRadioBtn.toggled.connect(lambda:self.handleRadioButton())
-        self.ndFreeRadioBtn.toggled.connect(lambda:self.handleRadioButton())
-        self.odWordRadioBtn.toggled.connect(lambda:self.handleRadioButton())
-        self.odMntRadioBtn.toggled.connect(lambda:self.handleRadioButton())
-        self.odFreeRadioBtn.toggled.connect(lambda:self.handleRadioButton())
+        self.ndFreeRadioBtn.toggled.connect(lambda:self.enableFreeStart())
+        self.odFreeRadioBtn.toggled.connect(lambda:self.enableFreeStart())
+        self.odFilePathTxt.textChanged.connect(lambda:self.enableFreeStart())
+
+
+
+    # Make blocking input box accept only integers
+    def enableInputValidation(self):
+        self.ndBlockInput.setValidator(QIntValidator())
+        self.odBlockInput.setValidator(QIntValidator())
 
 
     # Open the writing window
     def openWrintingWindow(self):
+        # Current Index = 0 at New Draft Tab
+        filePath = self.pathSolver.getNewFilePath() if self.tabWidget.currentIndex() == 0 else self.odFilePathTxt.text()
+        self.mainWidget.widget(1).setFilePath(filePath)
+        self.mainWidget.widget(1).setBlocking(self.blockingAmount, self.blockingInTime)
         self.mainWidget.setCurrentIndex(1)
 
 
@@ -50,12 +64,37 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         self.odFilePathTxt.setText(fname[0])
 
 
-    def handleRadioButton(self):
-        index = self.tabWidget.currentIndex()
-
-        if index == 0:  # New Draft Tab
+    # Enable start writing with blocking time = 0 min
+    def enableFreeStart(self):
+        
+        if self.tabWidget.currentIndex() == 0:  # New Draft Tab
             self.ndStartBtn.setEnabled(self.ndFreeRadioBtn.isChecked())
 
         else:           # Open Draft Tab
             if self.odFreeRadioBtn.isChecked() and self.odFilePathTxt.text() != '':
                 self.odStartBtn.setEnabled(True)
+
+        self.blockingInTime = True
+        self.blockingAmount = 0
+
+
+    def enableBlockedStart(self):
+        pass
+
+
+class PathSolver():
+
+    # Gets the path of the new created file in default dir
+    def getNewFilePath(self):
+        defaultPath = os.path.expanduser('~/Documents/DarkTurkeyWriter/')
+
+        filePath = os.path.join(defaultPath, self.getCurrentDateTime() + '.txt')
+        if not os.path.exists(defaultPath):
+            os.makedirs(defaultPath)
+            
+        return filePath
+
+
+    def getCurrentDateTime(self):
+        return datetime.now().strftime("%d-%m-%Y_%H-%M") # dd-mm-YY_H-M
+        
