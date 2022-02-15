@@ -89,7 +89,7 @@ class Ui_WritingWindow(object):
 "{\n"
 "background-color: #05B8CC;\n"
 "} ")
-        self.progressBar.setProperty("value", 50)
+        self.progressBar.setProperty("value", 0)
         self.progressBar.setAlignment(QtCore.Qt.AlignCenter)
         self.progressBar.setTextVisible(True)
         self.progressBar.setOrientation(QtCore.Qt.Horizontal)
