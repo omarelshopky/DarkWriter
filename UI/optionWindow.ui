@@ -416,7 +416,7 @@ QTabWidget::tab-bar:top {
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="iconSize">
            <size>
@@ -793,7 +793,11 @@ QTabWidget::tab-bar:top {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="odFilePathTxt"/>
+                 <widget class="QLineEdit" name="odFilePathTxt">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <spacer name="odFileSpacerM">

@@ -297,6 +297,7 @@ class Ui_optionWindow(object):
         spacerItem18 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.odFileLayout.addItem(spacerItem18)
         self.odFilePathTxt = QtWidgets.QLineEdit(self.openDraftTab)
+        self.odFilePathTxt.setReadOnly(True)
         self.odFilePathTxt.setObjectName("odFilePathTxt")
         self.odFileLayout.addWidget(self.odFilePathTxt)
         spacerItem19 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -425,7 +426,7 @@ class Ui_optionWindow(object):
         optionWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(optionWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(optionWindow)
 
     def retranslateUi(self, optionWindow):
