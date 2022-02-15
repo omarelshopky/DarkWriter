@@ -8,7 +8,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.mainWidget = widget
         self.setupUi(self)
         self.UiComponentsEvent()
-        self.hideEndSessionBtns()
         #loadUi('file', self)
   
 
@@ -16,29 +15,35 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         # Closes the app when quit button pressed
         self.saveAndQuitBtn.clicked.connect(lambda:self.closeApp())
     
+        # Block additional 10min
+        self.snoozeBtn.clicked.connect(lambda:self.addSnooze())
+
 
     # Sets Blocking Attributes from the calling Windows
     def setBlocking(self, amount, isTime):
         self.blockingAmount = amount
         self.blockingInTime = isTime
 
-        self.startTimers()
-
 
     # Set the file path to read and write
     def setFilePath(self, path):
         self.filePath = path
+        self.startTimers()
 
 
     # Start All needed timers
     def startTimers(self):
+        self.progressTimer = QTimer()
+        self.updateProgressTimer = QTimer()
+        self.activateProgressBar()
+
+
+    def activateProgressBar(self):
         if self.blockingInTime:
             self.startProgressTimer(self.blockingAmount)
         
-        self.updateProgressTimer = QTimer()
         if self.blockingAmount != 0:
             self.startUpdateProgressTimer()
-
 
     def startUpdateProgressTimer(self):
         self.updateProgressTimer.start(1000)
@@ -94,9 +99,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
 
     def startProgressTimer(self, timeInMin):
-        self.progressTimer = QTimer()
         self.progressTimer.start(int(timeInMin) * 60000)
         self.progressTimer.timeout.connect(lambda: self.stopProgressTimer())
+        self.hideEndSessionBtns()
 
 
     def stopProgressTimer(self):
@@ -116,18 +121,25 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.progressBar.show()
         self.snoozeBtn.hide()
         self.saveAndQuitBtn.hide()
+        self.progressBar.setValue(0)
 
 
     # Close the app
     def closeApp(self):
-        self.SaveFile()
+        self.saveFile()
 
         self.close()
         self.mainWidget.close()
 
 
     # Open browse files dialog to save the file
-    def SaveFile(self):
+    def saveFile(self):
         fname = QFileDialog.getSaveFileName(self, 'Save File', self.filePath, 'Text Files (*.txt)')
+
+
+    # Block additional 10 minutes
+    def addSnooze(self):
+        self.setBlocking(1, True)
+        self.activateProgressBar()
         
 
