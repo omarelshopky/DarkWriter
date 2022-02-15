@@ -5,10 +5,13 @@ from PyQt5.QtCore import *
 class WritingWindow(QMainWindow, Ui_WritingWindow):
     def __init__(self, widget):
         super().__init__()
+        self.wordsTyped = 0
+        self.contentLines = []
         self.mainWidget = widget
         self.setupUi(self)
         self.UiComponentsEvent()
-        #loadUi('file', self)
+        self.test = QTextEdit()
+        self.test.document().blockCountChanged
   
 
     def UiComponentsEvent(self):
@@ -42,6 +45,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
 
     def activateProgressBar(self):
+        self.hideEndSessionBtns()
+
         if self.blockingInTime:
             self.startProgressTimer(self.blockingAmount)
         
@@ -50,9 +55,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
 
     def startUpdateProgressTimer(self):
-        self.updateProgressTimer.start(1000)
+        self.updateProgressTimer.start(500)
         
-
 
     # Update the progress color and value and restart the timer if not 100%
     def stopUpdateProgressTimer(self):
@@ -63,17 +67,20 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
         if amount != 100:
             self.startUpdateProgressTimer()
+        else:
+            self.showEndSessionBtns()
+
         
 
     def updateProgressValue(self):
         if self.blockingInTime:
             remain = self.progressTimer.remainingTime() / 60000
         else:
-            # remain = self.wordsTyped
-            pass
+            remain = int(self.blockingAmount) - self.getWordsTyped()
 
         amount = 100 - ((remain / int(self.blockingAmount)) * 100)
-        self.progressBar.setValue(amount)
+
+        self.progressBar.setValue(amount)    
 
         return amount
 
@@ -104,12 +111,10 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def startProgressTimer(self, timeInMin):
         self.progressTimer.start(int(timeInMin) * 60000)
-        self.hideEndSessionBtns()
 
 
     def stopProgressTimer(self):
         self.progressTimer.stop()
-        self.showEndSessionBtns()
 
 
     # Show snooze and Quit buttons with hiding progress bar
@@ -157,6 +162,24 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     # Block additional 10 minutes
     def addSnooze(self):
-        self.setBlocking(1, True)
+        self.setBlocking(10, True)
         self.activateProgressBar()
         
+
+    def setContent(self):
+        index = int(self.currentParLbl.text())
+        if len(self.contentLines) != index + 1:
+            self.contentLines.append(self.textEdit.toPlainText().split('\n'))
+        else:
+            self.contentLines[index] = self.textEdit.toPlainText().split('\n')
+
+
+    def getWordsTyped(self):
+        self.setContent()
+
+        currentParagraphLines = 0
+        for line in self.contentLines[int(self.currentParLbl.text())]:
+            if line != '':
+                currentParagraphLines += len(line.split(' '))
+
+        return self.wordsTyped + currentParagraphLines
