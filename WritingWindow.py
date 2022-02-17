@@ -4,7 +4,7 @@ from components.FileHandler import FileHandler
 from PyQt5.QtWidgets import * 
 from PyQt5.QtCore import * 
 import keyboard
-
+from datetime import datetime
 class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def __init__(self, widget):
@@ -12,7 +12,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.fileHandler = FileHandler(self)
         self.wordsTyped = 0
         self.contentLines = []
-        self.wordsCount = []
+        self.wordsCount = [0]
         self.isDisappearable = True
         self.mainWidget = widget
         self.setupUi(self)
@@ -55,13 +55,14 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.progressTimer.timeout.connect(lambda: self.stopProgressTimer())
 
         self.updateProgressTimer = QTimer()
-        self.updateProgressTimer.timeout.connect(lambda: self.stopUpdateProgressTimer())
+        self.updateProgressTimer.timeout.connect(lambda: self.updateProgressbar())
+        
+        self.activateProgressBar()
 
         self.wordDisappearTimer = QTimer()
         self.wordDisappearTimer.timeout.connect(lambda: self.stopWordDisappearTimer())
         self.startWordDisappearTimer()
 
-        self.activateProgressBar()
         self.fileHandler.enableAutosave()
 
 
@@ -72,31 +73,25 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             self.startProgressTimer(self.blockingAmount)
         
         if self.blockingAmount != 0:
-            self.startUpdateProgressTimer()
+            self.updateProgressTimer.start(1000)
+
         else:
             self.showEndSessionBtns()
 
-
-    def startUpdateProgressTimer(self):
-        self.updateProgressTimer.start(500)
         
 
     # Update the progress color and value and restart the timer if not 100%
-    def stopUpdateProgressTimer(self):
-        self.updateProgressTimer.stop()
-
+    def updateProgressbar(self):
         amount = self.updateProgressValue()
         self.updateProgressColor(amount)
 
-        if amount != 100:
-            self.startUpdateProgressTimer()
-        else:
+        if amount == 100:
             self.showEndSessionBtns()
+            self.updateProgressTimer.stop()
 
-        
 
     def updateProgressValue(self):
-        print('inProgress')
+
         if self.blockingInTime:
             remain = self.progressTimer.remainingTime() / 60000
         else:
@@ -197,7 +192,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             for word in line.split(' '):
                 if word != '' and word != ' ':
                     currentParagraphWords += 1
-
+        
         self.wordsCount[index] = currentParagraphWords
 
 
@@ -213,7 +208,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
 
     def stopWordDisappearTimer(self):
-        self.updateProgressTimer.stop()
+        self.wordDisappearTimer.stop()
         if self.isDisappearable:
             self.disapearWord()
         self.startWordDisappearTimer()
