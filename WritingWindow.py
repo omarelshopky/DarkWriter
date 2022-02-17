@@ -1,17 +1,22 @@
 from UI.writingWindowUI import Ui_WritingWindow
 from PyQt5.QtWidgets import * 
 from PyQt5.QtCore import * 
+import keyboard
 
 class WritingWindow(QMainWindow, Ui_WritingWindow):
     def __init__(self, widget):
         super().__init__()
         self.wordsTyped = 0
         self.contentLines = []
+        self.isDisappearable = True
+        self.fileHandler = FileHandler()
         self.mainWidget = widget
         self.setupUi(self)
+        self.textEdit.document().setDocumentMargin(90)
         self.UiComponentsEvent()
-        self.test = QTextEdit()
-        self.test.document().blockCountChanged
+        # self.test = QTextEdit()
+        # self.test.
+        
   
 
     def UiComponentsEvent(self):
@@ -20,6 +25,14 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     
         # Block additional 10min
         self.snoozeBtn.clicked.connect(lambda:self.addSnooze())
+
+        self.textEdit.document().contentsChanged.connect(lambda:self.setIsDisappearable())
+        
+        self.nextBtn.clicked.connect(lambda:self.nextParagraph())
+        self.previousBtn.clicked.connect(lambda:self.previousParagraph())
+
+        # Catch pressing Enter
+        self.textEdit.installEventFilter(self)
 
 
     # Sets Blocking Attributes from the calling Windows
@@ -31,6 +44,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     # Set the file path to read and write
     def setFilePath(self, path):
         self.filePath = path
+        self.fileHandler.setFilePath(path)
         self.startTimers()
 
 
@@ -38,9 +52,14 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     def startTimers(self):
         self.progressTimer = QTimer()
         self.progressTimer.timeout.connect(lambda: self.stopProgressTimer())
+
         self.updateProgressTimer = QTimer()
         self.updateProgressTimer.timeout.connect(lambda: self.stopUpdateProgressTimer())
-        
+
+        self.wordDisappearTimer = QTimer()
+        self.wordDisappearTimer.timeout.connect(lambda: self.stopWordDisappearTimer())
+        self.startWordDisappearTimer()
+
         self.activateProgressBar()
 
 
@@ -52,6 +71,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         
         if self.blockingAmount != 0:
             self.startUpdateProgressTimer()
+        else:
+            self.showEndSessionBtns()
 
 
     def startUpdateProgressTimer(self):
@@ -168,10 +189,15 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def setContent(self):
         index = int(self.currentParLbl.text())
-        if len(self.contentLines) != index + 1:
+        if len(self.contentLines) < index + 1:
             self.contentLines.append(self.textEdit.toPlainText().split('\n'))
         else:
             self.contentLines[index] = self.textEdit.toPlainText().split('\n')
+
+
+    def updateContent(self):
+        self.textEdit.clear()
+        self.textEdit.setPlainText('\n'.join(self.contentLines[int(self.currentParLbl.text())]))
 
 
     def getWordsTyped(self):
@@ -179,7 +205,104 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
         currentParagraphLines = 0
         for line in self.contentLines[int(self.currentParLbl.text())]:
-            if line != '':
-                currentParagraphLines += len(line.split(' '))
+            for word in line.split(' '):
+                if word != '' and word != ' ':
+                    currentParagraphLines += 1
 
         return self.wordsTyped + currentParagraphLines
+
+
+    def startWordDisappearTimer(self):
+        self.wordDisappearTimer.start(3000)
+
+
+    def stopWordDisappearTimer(self):
+        self.updateProgressTimer.stop()
+        if self.isDisappearable:
+            self.disapearWord()
+        self.startWordDisappearTimer()
+        self.isDisappearable = True
+
+
+    def disapearWord(self):
+        self.setContent()
+        index = int(self.currentParLbl.text())
+
+        if self.contentLines[index][-1] == '':
+            if len(self.contentLines[index]) > 1:
+                self.contentLines[index].pop()
+
+            else:
+                if index != 0:
+                    self.contentLines.pop(int(self.currentParLbl.text()))
+                    self.previousParagraph(False)
+                    index = int(self.currentParLbl.text())
+
+        if len(self.contentLines[index]) != 0:
+            line = self.contentLines[index][-1]
+            self.contentLines[index][-1] = ' '.join(line.split(' ')[:-1])
+
+        self.updateContent()
+
+        # Set cursor at the end of text
+        self.setCursor(self.textEdit.document().characterCount() - 1)
+
+  
+    # Set the cursor in specific position
+    def setCursor(self, position):
+        cursor = self.textEdit.textCursor()
+        cursor.setPosition(cursor.position() + position)
+        self.textEdit.setTextCursor(cursor)
+
+
+    # Goes to next paragraph when pressing enter detected
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.KeyPress and obj is self.textEdit:
+            if event.key() == Qt.Key_Return and self.textEdit.hasFocus():
+                self.setContent()
+
+                if int(self.currentParLbl.text()) < len(self.contentLines)-1:
+                    self.nextParagraph()
+                else:
+                    self.contentLines.append([])
+                    self.currentParLbl.setText(str(int(self.currentParLbl.text())+1))
+                    self.updateContent()
+
+                # Remove the additional new line
+                keyboard.press_and_release('backspace')
+                
+        return super().eventFilter(obj, event)
+
+
+    def setIsDisappearable(self):
+        self.isDisappearable = False
+
+
+    # Go to the next paragraph
+    def nextParagraph(self):
+        if int(self.currentParLbl.text()) < len(self.contentLines)-1:
+            self.setContent()
+            self.currentParLbl.setText(str(int(self.currentParLbl.text())+1))
+            self.updateContent()
+
+
+    # Go back to the previous paragraph
+    def previousParagraph(self, isSet = True):
+        if int(self.currentParLbl.text()) > 0:
+            if isSet:
+                self.setContent()
+            self.currentParLbl.setText(str(int(self.currentParLbl.text())-1))
+            self.updateContent()
+
+
+class FileHandler:
+
+    def setFilePath(self, path):
+        self.filePath = path
+
+    def saveToFile(self, contentLines):
+        with open(self.filePath, 'w'):
+            pass
+
+    def loadFromFile(self):
+        pass
