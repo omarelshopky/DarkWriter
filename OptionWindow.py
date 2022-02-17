@@ -20,7 +20,7 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
 
         # Open writing window
         self.ndStartBtn.clicked.connect(lambda:self.openWrintingWindow())
-        self.odStartBtn.clicked.connect(lambda:self.openWrintingWindow())
+        self.odStartBtn.clicked.connect(lambda:self.openWrintingWindow(False))
 
         # Closes the app when quit button pressed
         self.odQuitBtn.clicked.connect(lambda:self.closeApp())
@@ -44,11 +44,15 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
 
 
     # Open the writing window
-    def openWrintingWindow(self):
+    def openWrintingWindow(self, isNew = True):
         # Current Index = 0 at New Draft Tab
         filePath = self.pathSolver.getNewFilePath() if self.tabWidget.currentIndex() == 0 else self.odFilePathTxt.text()
         self.setBlocking()
         self.mainWidget.widget(1).setFilePath(filePath)
+
+        if isNew == False:
+            self.mainWidget.widget(1).fileHandler.loadFromFile()
+            
         self.mainWidget.setCurrentIndex(1)
 
 
