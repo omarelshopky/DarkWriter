@@ -4,7 +4,8 @@ from components.FileHandler import FileHandler
 from PyQt5.QtWidgets import * 
 from PyQt5.QtCore import * 
 import keyboard
-from datetime import datetime
+
+
 class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def __init__(self, widget):
@@ -60,8 +61,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.activateProgressBar()
 
         self.wordDisappearTimer = QTimer()
-        self.wordDisappearTimer.timeout.connect(lambda: self.stopWordDisappearTimer())
-        self.startWordDisappearTimer()
+        self.wordDisappearTimer.timeout.connect(lambda: self.disapearWord())
+        self.wordDisappearTimer.start(3000)
 
         self.fileHandler.enableAutosave()
 
@@ -85,7 +86,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         amount = self.updateProgressValue()
         self.updateProgressColor(amount)
 
-        if amount == 100:
+        if int(amount) == 100:
             self.showEndSessionBtns()
             self.updateProgressTimer.stop()
 
@@ -203,42 +204,34 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         return sum(self.wordsCount)
 
 
-    def startWordDisappearTimer(self):
-        self.wordDisappearTimer.start(3000)
-
-
-    def stopWordDisappearTimer(self):
-        self.wordDisappearTimer.stop()
-        if self.isDisappearable:
-            self.disapearWord()
-        self.startWordDisappearTimer()
-        self.isDisappearable = True
-
-
+    # Remove the last word from the content
     def disapearWord(self):
-        self.setContent()
-        index = int(self.currentParLbl.text())
+        if self.isDisappearable:
+            self.setContent()
+            index = int(self.currentParLbl.text())
 
-        if self.contentLines[index][-1] == '':
-            if len(self.contentLines[index]) > 1:
-                self.contentLines[index].pop()
+            if self.contentLines[index][-1] == '':
+                if len(self.contentLines[index]) > 1:
+                    self.contentLines[index].pop()
 
-            else:
-                if index != 0:
-                    self.contentLines.pop(int(self.currentParLbl.text()))
-                    self.previousParagraph(False)
-                    index = int(self.currentParLbl.text())
+                else:
+                    if index != 0:
+                        self.contentLines.pop(int(self.currentParLbl.text()))
+                        self.previousParagraph(False)
+                        index = int(self.currentParLbl.text())
 
-        if len(self.contentLines[index]) != 0:
-            line = self.contentLines[index][-1]
-            self.contentLines[index][-1] = ' '.join(line.split(' ')[:-1])
+            if len(self.contentLines[index]) != 0:
+                line = self.contentLines[index][-1]
+                self.contentLines[index][-1] = ' '.join(line.split(' ')[:-1])
 
-        self.updateContent()
+            self.updateContent()
 
-        # Set cursor at the end of text
-        self.setCursor(self.textEdit.document().characterCount() - 1)
+            # Set cursor at the end of text
+            self.setCursor(self.textEdit.document().characterCount() - 1)
 
+        self.isDisappearable = True
   
+
     # Set the cursor in specific position
     def setCursor(self, position):
         cursor = self.textEdit.textCursor()
@@ -246,32 +239,55 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.textEdit.setTextCursor(cursor)
 
 
-    # Goes to next paragraph when pressing enter detected
+    # Detect pressing Enter
     def eventFilter(self, obj, event):
         if event.type() == QEvent.KeyPress and obj is self.textEdit:
             if event.key() == Qt.Key_Return and self.textEdit.hasFocus():
+                self.createNewParagraph()
+            
+            if (event.key() == Qt.Key_Backspace or event.key() == Qt.Key_Delete) and self.textEdit.hasFocus():
                 self.setContent()
-
-                if int(self.currentParLbl.text()) < len(self.contentLines)-1:
-                    self.nextParagraph()
-                else:
-                    self.contentLines.append([])
-                    self.wordsCount.append(0)
-                    self.currentParLbl.setText(str(int(self.currentParLbl.text())+1))
-                    self.updateContent()
-
-                # Remove the additional new line
-                keyboard.press_and_release('backspace')
-
-                # Save the file
-                self.fileHandler.saveToFile()
+                index = int(self.currentParLbl.text())
+    
+                if self.contentLines[index][-1] == '' and len(self.contentLines[index]) <= 1 and index != 0:
+                    self.contentLines.pop(index)
+                    self.contentLines[index-1][-1] += ' '
+                    self.previousParagraph(False)
+                    # Set cursor at the end of text
+                    self.setCursor(self.textEdit.document().characterCount() - 1)
+                    
+            
+            else:
+                if self.textEdit.document().characterCount() > 430:
+                    # Remove the last character
+                    keyboard.press_and_release('backspace')
+                    self.createNewParagraph()
+                
                 
         return super().eventFilter(obj, event)
 
 
+    def createNewParagraph(self):
+        self.setContent()
+
+        if int(self.currentParLbl.text()) < len(self.contentLines)-1:
+            self.nextParagraph()
+        else:
+            self.contentLines.append([])
+            self.wordsCount.append(0)
+            self.currentParLbl.setText(str(int(self.currentParLbl.text())+1))
+            self.updateContent()
+
+        # Remove the additional new line
+        keyboard.press_and_release('backspace')
+
+        # Save the file
+        self.fileHandler.saveToFile()
+
+
     def setIsDisappearable(self):
         self.isDisappearable = False
-
+                
 
     # Go to the next paragraph
     def nextParagraph(self):
