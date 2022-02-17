@@ -539,6 +539,9 @@ background-color: #05B8CC;
           <pointsize>12</pointsize>
          </font>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: white</string>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
@@ -546,7 +549,10 @@ background-color: #05B8CC;
          <enum>QFrame::Plain</enum>
         </property>
         <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAsNeeded</enum>
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
         </property>
         <property name="lineWrapMode">
          <enum>QTextEdit::WidgetWidth</enum>
