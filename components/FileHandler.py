@@ -12,17 +12,11 @@ class FileHandler:
         self.autosaveTimer = QTimer()
         
 
+    # Enable saving the file automaticlly
     def enableAutosave(self):
-        self.autosaveTimer.timeout.connect(lambda: self.autosave())
+        self.autosaveTimer.timeout.connect(lambda: self.saveToFile())
         self.autosaveTimer.start(10000)
     
-
-    # Save the file each 
-    def autosave(self):
-        self.autosaveTimer.stop()
-        self.saveToFile()
-        self.autosaveTimer.start(10000)
-        
 
     def setFilePath(self, path):
         self.filePath = path
