@@ -1,5 +1,6 @@
 from pydoc import doc
 from UI.writingWindowUI import Ui_WritingWindow
+from components.FileHandler import FileHandler
 from PyQt5.QtWidgets import * 
 from PyQt5.QtCore import * 
 import keyboard
@@ -11,14 +12,12 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.fileHandler = FileHandler(self)
         self.wordsTyped = 0
         self.contentLines = []
+        self.wordsCount = []
         self.isDisappearable = True
         self.mainWidget = widget
         self.setupUi(self)
         self.textEdit.document().setDocumentMargin(90)
         self.UiComponentsEvent()
-        # self.test = QTextEdit()
-        # self.test.
-        
   
 
     def UiComponentsEvent(self):
@@ -63,6 +62,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.startWordDisappearTimer()
 
         self.activateProgressBar()
+        self.fileHandler.enableAutosave()
 
 
     def activateProgressBar(self):
@@ -96,6 +96,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         
 
     def updateProgressValue(self):
+        print('inProgress')
         if self.blockingInTime:
             remain = self.progressTimer.remainingTime() / 60000
         else:
@@ -157,8 +158,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     # Close the app
     def closeApp(self):
-        self.setContent()
-        state = self.fileHandler.saveToFile(self.contentLines, True)
+        self.setIsDisappearable()
+        state = self.fileHandler.saveToFile(True)
 
         if state == True: # Successfully save the file
             self.close()
@@ -175,8 +176,11 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         index = int(self.currentParLbl.text())
         if len(self.contentLines) < index + 1:
             self.contentLines.append(self.textEdit.toPlainText().split('\n'))
+            self.wordsCount.append(0)
         else:
             self.contentLines[index] = self.textEdit.toPlainText().split('\n')
+
+        self.countWords()
 
 
     def updateContent(self):
@@ -184,16 +188,24 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.textEdit.setPlainText('\n'.join(self.contentLines[int(self.currentParLbl.text())]))
 
 
+    # Count number of words in the current paragraph
+    def countWords(self):
+        index = int(self.currentParLbl.text())
+
+        currentParagraphWords = 0
+        for line in self.contentLines[index]:
+            for word in line.split(' '):
+                if word != '' and word != ' ':
+                    currentParagraphWords += 1
+
+        self.wordsCount[index] = currentParagraphWords
+
+
+    # Returns number of words in the whole file
     def getWordsTyped(self):
         self.setContent()
 
-        currentParagraphLines = 0
-        for line in self.contentLines[int(self.currentParLbl.text())]:
-            for word in line.split(' '):
-                if word != '' and word != ' ':
-                    currentParagraphLines += 1
-
-        return self.wordsTyped + currentParagraphLines
+        return sum(self.wordsCount)
 
 
     def startWordDisappearTimer(self):
@@ -249,6 +261,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     self.nextParagraph()
                 else:
                     self.contentLines.append([])
+                    self.wordsCount.append(0)
                     self.currentParLbl.setText(str(int(self.currentParLbl.text())+1))
                     self.updateContent()
 
@@ -256,7 +269,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                 keyboard.press_and_release('backspace')
 
                 # Save the file
-                self.fileHandler.saveToFile(self.contentLines)
+                self.fileHandler.saveToFile()
                 
         return super().eventFilter(obj, event)
 
@@ -281,72 +294,3 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             self.currentParLbl.setText(str(int(self.currentParLbl.text())-1))
             self.updateContent()
 
-
-
-class FileHandler:
-    def __init__(self, parent):
-        self.parent = parent
-        self.saveStatusMessage = SaveStatusMessage(parent)
-
-
-    def setFilePath(self, path):
-        self.filePath = path
-
-
-    def saveToFile(self, contentLines, close = False):
-        try:
-            if close:
-                # Open browse to enable user to choose a location
-                fname = QFileDialog.getSaveFileName(self.parent, 'Save File', self.filePath, 'Text Files (*.txt)')[0]
-                
-                if fname != '':
-                    self.filePath = fname
-                else:
-                    return False
-        
-            with open(self.filePath, 'w') as file:
-                text = ''
-                for paragraph in contentLines:
-                    text += '\n'.join(paragraph)
-                    text += '\n\n'
-
-                file.write(text)
-                del text
-
-            if close:
-                self.saveStatusMessage.displaySuccess(self.filePath)
-
-            return True
-
-        except:
-            self.saveStatusMessage.displayFail(self.filePath)
-            return False
-
-            
-
-    def loadFromFile(self):
-        contentLine = []
-
-        # with open(self.filePath, 'w') as file:
-
-
-
-class SaveStatusMessage:
-    def __init__(self, parent):
-        self.parent = parent
-
-
-    def _display(self, title, text):
-        dlg = QMessageBox(self.parent)
-        dlg.setWindowTitle(title)
-        dlg.setText(text)
-        button = dlg.exec()
-        return button == QMessageBox.Ok
-
-
-    def displaySuccess(self, filePath):
-        return self._display("Well Done!", f"Your draft was successfully saved here\n\n{filePath}")
-
-
-    def displayFail(self, filePath):
-        return self._display("Sorry!", f"There is an error saving your draft here\n\n{filePath}")
