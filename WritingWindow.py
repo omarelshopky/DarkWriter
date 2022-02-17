@@ -1,8 +1,8 @@
-from pydoc import doc
 from UI.writingWindowUI import Ui_WritingWindow
 from components.FileHandler import FileHandler
 from PyQt5.QtWidgets import * 
 from PyQt5.QtCore import * 
+from PyQt5.QtGui import * 
 import keyboard
 
 
@@ -11,15 +11,24 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     def __init__(self, widget):
         super().__init__()
         self.fileHandler = FileHandler(self)
-        self.wordsTyped = 0
+        self.loadedWords = 0
         self.contentLines = []
         self.wordsCount = [0]
         self.isDisappearable = True
+        self.reachMax = False
         self.mainWidget = widget
         self.setupUi(self)
         self.textEdit.document().setDocumentMargin(90)
         self.UiComponentsEvent()
-  
+        # self.previousBtn.setIcon(self.iconFromBase64(righArow))
+
+
+    def iconFromBase64(self, base64):
+        pixmap = QPixmap()
+        pixmap.loadFromData(QByteArray.fromBase64(base64))
+        icon = QIcon(pixmap)
+        return icon
+
 
     def UiComponentsEvent(self):
         # Saves the file and Closes the app 
@@ -176,7 +185,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         else:
             self.contentLines[index] = self.textEdit.toPlainText().split('\n')
 
-        self.countWords()
+        self.countWords(index)
 
 
     def updateContent(self):
@@ -185,8 +194,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
 
     # Count number of words in the current paragraph
-    def countWords(self):
-        index = int(self.currentParLbl.text())
+    def countWords(self, index):
 
         currentParagraphWords = 0
         for line in self.contentLines[index]:
@@ -200,8 +208,12 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     # Returns number of words in the whole file
     def getWordsTyped(self):
         self.setContent()
-
-        return sum(self.wordsCount)
+        currentWords = sum(self.wordsCount)
+        
+        if currentWords < self.loadedWords:
+            return 0
+        else:
+            return currentWords - self.loadedWords
 
 
     # Remove the last word from the content
@@ -242,27 +254,30 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     # Detect pressing Enter
     def eventFilter(self, obj, event):
         if event.type() == QEvent.KeyPress and obj is self.textEdit:
+            index = int(self.currentParLbl.text())
+
             if event.key() == Qt.Key_Return and self.textEdit.hasFocus():
                 self.createNewParagraph()
             
             if (event.key() == Qt.Key_Backspace or event.key() == Qt.Key_Delete) and self.textEdit.hasFocus():
                 self.setContent()
-                index = int(self.currentParLbl.text())
-    
-                if self.contentLines[index][-1] == '' and len(self.contentLines[index]) <= 1 and index != 0:
+                
+                if self.contentLines[index][-1] == '' and len(self.contentLines[index]) <= 1 and index != 0 and self.reachMax == False:
                     self.contentLines.pop(index)
                     self.contentLines[index-1][-1] += ' '
                     self.previousParagraph(False)
                     # Set cursor at the end of text
                     self.setCursor(self.textEdit.document().characterCount() - 1)
-                    
-            
+
             else:
-                if self.textEdit.document().characterCount() > 430:
+                if self.textEdit.document().size().height() > 420:
                     # Remove the last character
+                    self.reachMax = True
                     keyboard.press_and_release('backspace')
                     self.createNewParagraph()
-                
+                    self.contentLines[index][-1] = self.contentLines[index][-1][:-1]
+                else:
+                    self.reachMax = False
                 
         return super().eventFilter(obj, event)
 

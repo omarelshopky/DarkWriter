@@ -57,6 +57,7 @@ class FileHandler:
 
     def loadFromFile(self):
         contentLines = []
+        wordsCount = []
         contentLines.append([])
         index = 0
 
@@ -64,7 +65,6 @@ class FileHandler:
             lines = file.readlines()
 
             for line in lines:
-                print(self.filePath)
                 if line != '/n':
                     contentLines[index].append(line.strip())
                 else:
@@ -74,5 +74,12 @@ class FileHandler:
             del lines
 
         self.parent.contentLines = contentLines
+
+        i = 0
+        for p in contentLines:
+            self.parent.countWords(i)
+            i += 1
+
+        self.parent.loadedWords = sum(self.parent.wordsCount)
         self.parent.updateContent()
 
