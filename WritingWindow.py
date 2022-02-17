@@ -1,15 +1,17 @@
+from pydoc import doc
 from UI.writingWindowUI import Ui_WritingWindow
 from PyQt5.QtWidgets import * 
 from PyQt5.QtCore import * 
 import keyboard
 
 class WritingWindow(QMainWindow, Ui_WritingWindow):
+
     def __init__(self, widget):
         super().__init__()
+        self.fileHandler = FileHandler(self)
         self.wordsTyped = 0
         self.contentLines = []
         self.isDisappearable = True
-        self.fileHandler = FileHandler()
         self.mainWidget = widget
         self.setupUi(self)
         self.textEdit.document().setDocumentMargin(90)
@@ -21,7 +23,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def UiComponentsEvent(self):
         # Saves the file and Closes the app 
-        self.saveAndQuitBtn.clicked.connect(lambda:self.saveAndQuit())
+        self.saveAndQuitBtn.clicked.connect(lambda:self.closeApp())
     
         # Block additional 10min
         self.snoozeBtn.clicked.connect(lambda:self.addSnooze())
@@ -153,32 +155,14 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.progressBar.setValue(0)
 
 
-    def saveAndQuit(self):
-        filePath = self.saveFile()
-        self.displayMessage(filePath)
-        self.closeApp()
-
-
     # Close the app
     def closeApp(self):
-        self.close()
-        self.mainWidget.close()
+        self.setContent()
+        state = self.fileHandler.saveToFile(self.contentLines, True)
 
-
-    # Open browse files dialog to save the file
-    def saveFile(self):
-        fname = QFileDialog.getSaveFileName(self, 'Save File', self.filePath, 'Text Files (*.txt)')
-
-        return fname[0]
-
-
-    # Display a dialog Message when successfulley saved
-    def displayMessage(self, filePath):
-        dlg = QMessageBox(self)
-        dlg.setWindowTitle("Well Done!")
-        dlg.setText(f"Your draft was successfully saved here\n\n{filePath}")
-        button = dlg.exec()
-        return button == QMessageBox.Ok
+        if state == True: # Successfully save the file
+            self.close()
+            self.mainWidget.close()
 
 
     # Block additional 10 minutes
@@ -270,6 +254,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
                 # Remove the additional new line
                 keyboard.press_and_release('backspace')
+
+                # Save the file
+                self.fileHandler.saveToFile(self.contentLines)
                 
         return super().eventFilter(obj, event)
 
@@ -295,14 +282,71 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             self.updateContent()
 
 
+
 class FileHandler:
+    def __init__(self, parent):
+        self.parent = parent
+        self.saveStatusMessage = SaveStatusMessage(parent)
+
 
     def setFilePath(self, path):
         self.filePath = path
 
-    def saveToFile(self, contentLines):
-        with open(self.filePath, 'w'):
-            pass
+
+    def saveToFile(self, contentLines, close = False):
+        try:
+            if close:
+                # Open browse to enable user to choose a location
+                fname = QFileDialog.getSaveFileName(self.parent, 'Save File', self.filePath, 'Text Files (*.txt)')[0]
+                
+                if fname != '':
+                    self.filePath = fname
+                else:
+                    return False
+        
+            with open(self.filePath, 'w') as file:
+                text = ''
+                for paragraph in contentLines:
+                    text += '\n'.join(paragraph)
+                    text += '\n\n'
+
+                file.write(text)
+                del text
+
+            if close:
+                self.saveStatusMessage.displaySuccess(self.filePath)
+
+            return True
+
+        except:
+            self.saveStatusMessage.displayFail(self.filePath)
+            return False
+
+            
 
     def loadFromFile(self):
-        pass
+        contentLine = []
+
+        # with open(self.filePath, 'w') as file:
+
+
+
+class SaveStatusMessage:
+    def __init__(self, parent):
+        self.parent = parent
+
+
+    def _display(self, title, text):
+        dlg = QMessageBox(self.parent)
+        dlg.setWindowTitle(title)
+        dlg.setText(text)
+        button = dlg.exec()
+        return button == QMessageBox.Ok
+
+
+    def displaySuccess(self, filePath):
+        return self._display("Well Done!", f"Your draft was successfully saved here\n\n{filePath}")
+
+
+    def displayFail(self, filePath):
+        return self._display("Sorry!", f"There is an error saving your draft here\n\n{filePath}")
