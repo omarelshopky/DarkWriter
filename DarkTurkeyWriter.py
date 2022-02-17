@@ -1,13 +1,10 @@
 from PyQt5.QtWidgets import * 
-from PyQt5.QtGui import * 
-from PyQt5.QtCore import * 
+from PyQt5.QtGui import *  
 from ctypes import windll
 import sys
 import keyboard
 from OptionWindow import OptionWindow
 from WritingWindow import WritingWindow
-
-from PyQt5.uic import loadUi
 
 
 class StackWidget(QStackedWidget):
