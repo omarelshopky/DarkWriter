@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Designer UI/writingWindow.ui'
+# Form implementation generated from reading ui file '.\Designer UI\writingWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -78,19 +78,20 @@ class Ui_WritingWindow(object):
         self.topLayoutV.addLayout(self.titleLayoutH)
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
         self.progressBar.setEnabled(True)
+        self.progressBar.setMaximumSize(QtCore.QSize(16777215, 10))
         self.progressBar.setAutoFillBackground(False)
         self.progressBar.setStyleSheet("QProgressBar\n"
 "{\n"
 "border: solid grey;\n"
 "color: black;\n"
-"height: 5px\n"
+"height: 1px\n"
 "}\n"
 "QProgressBar::chunk \n"
 "{\n"
-"background-color: #05B8CC;\n"
+"background-color: #4d7182;\n"
 "} ")
-        self.progressBar.setProperty("value", 0)
-        self.progressBar.setAlignment(QtCore.Qt.AlignCenter)
+        self.progressBar.setProperty("value", 50)
+        self.progressBar.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.progressBar.setTextVisible(False)
         self.progressBar.setOrientation(QtCore.Qt.Horizontal)
         self.progressBar.setObjectName("progressBar")
@@ -189,7 +190,7 @@ class Ui_WritingWindow(object):
         self.previousBtn = QtWidgets.QPushButton(self.centralwidget)
         self.previousBtn.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("Designer UI\\../img/arrow-left.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(".\\Designer UI\\../img/arrow-left.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.previousBtn.setIcon(icon)
         self.previousBtn.setFlat(True)
         self.previousBtn.setObjectName("previousBtn")
@@ -203,7 +204,7 @@ class Ui_WritingWindow(object):
         self.nextBtn = QtWidgets.QPushButton(self.centralwidget)
         self.nextBtn.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("Designer UI\\../img/arrow-right.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(".\\Designer UI\\../img/arrow-right.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.nextBtn.setIcon(icon1)
         self.nextBtn.setFlat(True)
         self.nextBtn.setObjectName("nextBtn")
@@ -292,6 +293,7 @@ class Ui_WritingWindow(object):
         WritingWindow.setWindowTitle(_translate("WritingWindow", "MainWindow"))
         self.titleLblL.setText(_translate("WritingWindow", "KEYBOARD"))
         self.titleLblR.setText(_translate("WritingWindow", "COWBOY"))
+        self.progressBar.setFormat(_translate("WritingWindow", "%p%"))
         self.snoozeBtn.setText(_translate("WritingWindow", "Snooze (10 min)"))
         self.saveAndQuitBtn.setText(_translate("WritingWindow", "Save and Quit"))
         self.currentParLbl.setText(_translate("WritingWindow", "0"))

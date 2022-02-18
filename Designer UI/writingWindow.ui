@@ -172,6 +172,12 @@
             <property name="enabled">
              <bool>true</bool>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>10</height>
+             </size>
+            </property>
             <property name="autoFillBackground">
              <bool>false</bool>
             </property>
@@ -180,24 +186,27 @@
 {
 border: solid grey;
 color: black;
-height: 5px
+height: 1px
 }
 QProgressBar::chunk 
 {
-background-color: #05B8CC;
+background-color: #4d7182;
 } </string>
             </property>
             <property name="value">
-             <number>0</number>
+             <number>50</number>
             </property>
             <property name="alignment">
-             <set>Qt::AlignCenter</set>
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="textVisible">
              <bool>false</bool>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="format">
+             <string>%p%</string>
             </property>
            </widget>
           </item>
