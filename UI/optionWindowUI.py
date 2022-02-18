@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\UI\optionWindow.ui'
+# Form implementation generated from reading ui file 'Designer UI/optionWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.4
 #
@@ -432,8 +432,8 @@ class Ui_optionWindow(object):
     def retranslateUi(self, optionWindow):
         _translate = QtCore.QCoreApplication.translate
         optionWindow.setWindowTitle(_translate("optionWindow", "optionWindow"))
-        self.titleLblL.setText(_translate("optionWindow", "Dark Turkey"))
-        self.titleLblR.setText(_translate("optionWindow", "Writer"))
+        self.titleLblL.setText(_translate("optionWindow", "KEYBOARD"))
+        self.titleLblR.setText(_translate("optionWindow", "COWBOY"))
         self.ndLbl1.setText(_translate("optionWindow", "You\'ll be able to save your work when you finish."))
         self.ndLbl2.setText(_translate("optionWindow", "Periodic auto-saves are stored in your \"My Documents\" folder."))
         self.ndBlockInputLbl.setText(_translate("optionWindow", "Block everthing until:"))
