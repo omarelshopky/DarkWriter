@@ -20,7 +20,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.setupUi(self)
         self.textEdit.document().setDocumentMargin(90)
         self.UiComponentsEvent()
-        # self.previousBtn.setIcon(self.iconFromBase64(righArow))
+        # self.previousBtn.setIcon(self.iconFromBase64(leftArrow))
+        # self.nextBtn.setIcon(self.iconFromBase64(rightArrow))
 
 
     def iconFromBase64(self, base64):
@@ -93,7 +94,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     # Update the progress color and value and restart the timer if not 100%
     def updateProgressbar(self):
         amount = self.updateProgressValue()
-        self.updateProgressColor(amount)
+        # self.updateProgressColor(amount)
 
         if int(amount) == 100:
             self.showEndSessionBtns()
@@ -211,6 +212,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         currentWords = sum(self.wordsCount)
         
         if currentWords < self.loadedWords:
+            self.loadedWords = currentWords
             return 0
         else:
             return currentWords - self.loadedWords
@@ -278,7 +280,12 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     self.contentLines[index][-1] = self.contentLines[index][-1][:-1]
                 else:
                     self.reachMax = False
-                
+            
+
+            if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
+                self.close()
+                self.mainWidget.close()
+
         return super().eventFilter(obj, event)
 
 
