@@ -225,7 +225,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Dark Turkey</string>
+             <string>KEYBOARD</string>
             </property>
             <property name="textFormat">
              <enum>Qt::RichText</enum>
@@ -286,7 +286,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Writer</string>
+             <string>COWBOY</string>
             </property>
            </widget>
           </item>
