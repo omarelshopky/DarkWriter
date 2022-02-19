@@ -280,9 +280,9 @@ class Ui_WritingWindow(object):
         self.horizontalLayout.addLayout(self.middleLayoutV)
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem8)
-        self.horizontalLayout.setStretch(0, 10)
-        self.horizontalLayout.setStretch(1, 19)
-        self.horizontalLayout.setStretch(2, 10)
+        self.horizontalLayout.setStretch(0, 12)
+        self.horizontalLayout.setStretch(1, 23)
+        self.horizontalLayout.setStretch(2, 12)
         WritingWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(WritingWindow)
