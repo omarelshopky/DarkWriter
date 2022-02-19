@@ -49,8 +49,8 @@ class FileHandler:
 
             return True
 
-        except:
-            self.saveStatusMessage.displayFail(self.filePath)
+        except Exception as e:
+            self.saveStatusMessage.displayFail(self.filePath + '\n' + str(e))
             return False
 
             
