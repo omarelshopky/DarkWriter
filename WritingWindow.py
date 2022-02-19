@@ -15,6 +15,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.contentLines = []
         self.wordsCount = [0]
         self.isDisappearable = True
+        self.saving = False
         self.reachMax = False
         self.mainWidget = widget
         self.setupUi(self)
@@ -98,6 +99,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
         if int(amount) == 100:
             self.showEndSessionBtns()
+            self.saving = True
             self.updateProgressTimer.stop()
 
 
@@ -115,28 +117,28 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         return amount
 
 
-    # Updates the progress bar's color according to its amount
-    def updateProgressColor(self, amount):
+    # # Updates the progress bar's color according to its amount
+    # def updateProgressColor(self, amount):
         
-        if amount <= 25:
-            color = 'ED2938'
-        elif amount <= 50:
-            color = 'FF8C01'
-        elif amount <= 75:
-            color = 'FFE733'
-        else:
-            color = '37DD5C'
+    #     if amount <= 25:
+    #         color = 'ED2938'
+    #     elif amount <= 50:
+    #         color = 'FF8C01'
+    #     elif amount <= 75:
+    #         color = 'FFE733'
+    #     else:
+    #         color = '37DD5C'
 
-        self.progressBar.setStyleSheet("QProgressBar"
-            "{"
-            "border: solid grey;"
-            "color: black;"
-            "height: 5px"
-            "}"
-            "QProgressBar::chunk"
-            "{"
-            f"background-color: #{color};"
-            "} ")
+    #     self.progressBar.setStyleSheet("QProgressBar"
+    #         "{"
+    #         "border: solid grey;"
+    #         "color: black;"
+    #         "height: 5px"
+    #         "}"
+    #         "QProgressBar::chunk"
+    #         "{"
+    #         f"background-color: #{color};"
+    #         "} ")
 
 
     def startProgressTimer(self, timeInMin):
@@ -174,6 +176,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     # Block additional 10 minutes
     def addSnooze(self):
+        self.saving = False
         self.setBlocking(10, True)
         self.activateProgressBar()
         
@@ -220,7 +223,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     # Remove the last word from the content
     def disapearWord(self):
-        if self.isDisappearable:
+        if self.isDisappearable and not self.saving:
             self.setContent()
             index = int(self.currentParLbl.text())
 
