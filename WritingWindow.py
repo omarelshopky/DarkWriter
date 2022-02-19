@@ -21,16 +21,20 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.setupUi(self)
         self.textEdit.document().setDocumentMargin(90)
         self.UiComponentsEvent()
+        self.hideNavigation()
         # self.previousBtn.setIcon(self.iconFromBase64(leftArrow))
         # self.nextBtn.setIcon(self.iconFromBase64(rightArrow))
 
 
-    def iconFromBase64(self, base64):
-        pixmap = QPixmap()
-        pixmap.loadFromData(QByteArray.fromBase64(base64))
-        icon = QIcon(pixmap)
-        return icon
+    # def iconFromBase64(self, base64):
+    #     pixmap = QPixmap()
+    #     pixmap.loadFromData(QByteArray.fromBase64(base64))
+    #     icon = QIcon(pixmap)
+    #     return icon
 
+    def hideNavigation(self):
+        self.nextBtn.hide()
+        self.previousBtn.hide()
 
     def UiComponentsEvent(self):
         # Saves the file and Closes the app 
@@ -41,8 +45,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
         self.textEdit.document().contentsChanged.connect(lambda:self.setIsDisappearable())
         
-        self.nextBtn.clicked.connect(lambda:self.nextParagraph())
-        self.previousBtn.clicked.connect(lambda:self.previousParagraph())
+        # self.nextBtn.clicked.connect(lambda:self.nextParagraph())
+        # self.previousBtn.clicked.connect(lambda:self.previousParagraph())
 
         # Catch pressing Enter
         self.textEdit.installEventFilter(self)
