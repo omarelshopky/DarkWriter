@@ -38,6 +38,7 @@ def main():
     keyboard.remap_key('ctrl', 'shift')
 
     App = QApplication(sys.argv)
+    App.setStyle('Breeze') # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
 
     mainWidget = StackWidget()
     
