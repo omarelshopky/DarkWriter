@@ -543,6 +543,12 @@ background-color: #4d7182;
       </item>
       <item>
        <widget class="QTextEdit" name="textEdit">
+        <property name="minimumSize">
+         <size>
+          <width>930</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="palette">
          <palette>
           <active>

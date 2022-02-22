@@ -213,6 +213,7 @@ class Ui_WritingWindow(object):
         self.navLayoutH.addItem(spacerItem6)
         self.middleLayoutV.addLayout(self.navLayoutH)
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
+        self.textEdit.setMinimumSize(QtCore.QSize(930, 0))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
         brush.setStyle(QtCore.Qt.SolidPattern)
