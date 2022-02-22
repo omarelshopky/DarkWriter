@@ -14,7 +14,10 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="12,23,12">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="50,98,50">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
     <property name="topMargin">
      <number>50</number>
     </property>
@@ -545,7 +548,7 @@ background-color: #4d7182;
        <widget class="QTextEdit" name="textEdit">
         <property name="minimumSize">
          <size>
-          <width>930</width>
+          <width>710</width>
           <height>0</height>
          </size>
         </property>
