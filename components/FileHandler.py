@@ -1,7 +1,8 @@
+from aiohttp import content_disposition_filename
 from components.SaveStatusMessage import SaveStatusMessage
 from PyQt5.QtWidgets import * 
 from PyQt5.QtCore import * 
-
+import os
 
 class FileHandler:
     def __init__(self, parent):
@@ -19,7 +20,7 @@ class FileHandler:
     
 
     def setFilePath(self, path):
-        self.filePath = path
+        self.filePath = path.replace('\\', '/')
 
 
     def saveToFile(self, close = False):
@@ -34,15 +35,19 @@ class FileHandler:
                     self.filePath = fname
                 else:
                     return False
-        
+
+            if os.path.exists(self.filePath):
+                os.remove(self.filePath) 
+
             with open(self.filePath, 'w') as file:
                 text = ''
                 for paragraph in self.parent.contentLines:
                     text += ' '.join(paragraph)
-                    text += '\n\n'
+                    text += '\n'
 
                 file.write(text)
                 del text
+                file.close()
 
             if close:
                 self.saveStatusMessage.displaySuccess(self.filePath)
@@ -57,22 +62,16 @@ class FileHandler:
 
     def loadFromFile(self):
         contentLines = []
-        wordsCount = []
-        contentLines.append([])
-        index = 0
 
         with open(self.filePath, 'r') as file:
             lines = file.readlines()
-
+        
             for line in lines:
-                if line != '/n':
-                    contentLines[index].append(line.strip())
-                else:
-                    contentLines.append([])
-                    index += 1
-            
+                contentLines.append([line.strip()])
+                
             del lines
-
+            file.close()
+            
         self.parent.contentLines = contentLines
 
         i = 0
