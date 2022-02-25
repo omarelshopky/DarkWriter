@@ -35,6 +35,14 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     #     pixmap.loadFromData(QByteArray.fromBase64(base64))
     #     icon = QIcon(pixmap)
     #     return icon
+    def calculateLineHeight(self):
+        self.textEdit.setPlainText('o')
+        firstLine = self.textEdit.document().size().height()
+        self.textEdit.clear()
+        self.textEdit.setPlainText('o\no')
+        secnondLine = self.textEdit.document().size().height()
+        self.textEdit.clear()
+        self.maxLinesHeight = firstLine + 5 * (secnondLine - firstLine)
 
     def hideNavigation(self):
         self.nextBtn.hide()
@@ -52,7 +60,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         # self.nextBtn.clicked.connect(lambda:self.nextParagraph())
         # self.previousBtn.clicked.connect(lambda:self.previousParagraph())
 
-        # Catch pressing Enter
+        # Catch pressing on keyboard
         self.textEdit.installEventFilter(self)
 
 
@@ -82,6 +90,10 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.wordDisappearTimer = QTimer()
         self.wordDisappearTimer.timeout.connect(lambda: self.disapearWord())
         self.wordDisappearTimer.start(3000)
+
+        self.checkLinesTimer = QTimer()
+        self.checkLinesTimer.timeout.connect(lambda: self.checkLines())
+        self.checkLinesTimer.start(10)
 
         self.fileHandler.enableAutosave()
 
@@ -285,23 +297,24 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     # Set cursor at the end of text
                     self.setCursor(self.textEdit.document().characterCount() - 1)
 
-            else:
-                if self.textEdit.document().size().height() > 420:
-                    # Remove the last character
-                    self.reachMax = True
-                    keyboard.press_and_release('backspace')
-                    self.createNewParagraph()
-                    self.contentLines[index][-1] = self.contentLines[index][-1][:-1]
-                else:
-                    self.reachMax = False
-            
-
             if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
                 self.close()
                 self.mainWidget.close()
 
         return super().eventFilter(obj, event)
 
+
+    def checkLines(self):
+        
+        if self.textEdit.document().size().height() > self.maxLinesHeight:
+            index = int(self.currentParLbl.text())
+            # Remove the last character
+            self.reachMax = True
+            keyboard.press_and_release('backspace')
+            self.createNewParagraph()
+            self.contentLines[index][-1] = self.contentLines[index][-1][:-1]
+        else:
+            self.reachMax = False
 
     def createNewParagraph(self):
         self.setContent()
