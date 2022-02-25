@@ -50,15 +50,15 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         self.setBlocking()
         self.mainWidget.widget(1).setFilePath(filePath)
 
+        self.mainWidget.setCurrentIndex(1)
+        self.mainWidget.widget(1).calculateLineHeight()
+
         if isNew == False:
             self.mainWidget.widget(1).fileHandler.loadFromFile()
             self.mainWidget.widget(1).currentParLbl.setText(str(len(self.mainWidget.widget(1).contentLines)-1))
             self.mainWidget.widget(1).updateContent()
             self.mainWidget.widget(1).setCursor(self.mainWidget.widget(1).textEdit.document().characterCount() - 1)
             self.mainWidget.widget(1).saving = True
-
-        self.mainWidget.setCurrentIndex(1)
-        self.mainWidget.widget(1).calculateLineHeight()
 
 
     # Set Blocking period and Type
