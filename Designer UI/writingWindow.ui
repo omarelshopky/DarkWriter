@@ -35,7 +35,7 @@
      </spacer>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="middleLayoutV" stretch="0,4,0,7,4">
+     <layout class="QVBoxLayout" name="middleLayoutV" stretch="0,4,0,6,5">
       <item>
        <layout class="QHBoxLayout" name="topLayoutH" stretch="1,0,1">
         <item>
