@@ -16,7 +16,7 @@ class FileHandler:
     # Enable saving the file automaticlly
     def enableAutosave(self):
         self.autosaveTimer.timeout.connect(lambda: self.saveToFile())
-        self.autosaveTimer.start(10000)
+        self.autosaveTimer.start(5000)
     
 
     def setFilePath(self, path):
