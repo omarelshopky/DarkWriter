@@ -308,9 +308,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     # Set cursor at the end of text
                     self.setCursor(self.textEdit.document().characterCount() - 1)
 
-            if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
-                self.close()
-                self.mainWidget.close()
+            # if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
+            #     self.close()
+            #     self.mainWidget.close()
 
         return super().eventFilter(obj, event)
 
@@ -321,11 +321,17 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             index = int(self.currentParLbl.text())
             # Remove the last character
             self.reachMax = True
+            self.setContent()
+            lastChar = self.contentLines[index][-1][-1]
             keyboard.press_and_release('backspace')
             self.createNewParagraph()
             self.contentLines[index][-1] = self.contentLines[index][-1][:-1]
+            self.contentLines[index+1][0] = lastChar
+            self.updateContent()
+            keyboard.press_and_release('right')
         else:
             self.reachMax = False
+
 
     def createNewParagraph(self):
         self.setContent()
