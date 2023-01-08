@@ -148,7 +148,7 @@
        </spacer>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="centerLayoutV" stretch="0,1,5,8,9">
+       <layout class="QVBoxLayout" name="centerLayoutV" stretch="0,1,5,9,9">
         <item>
          <spacer name="centerSpacerU">
           <property name="orientation">
@@ -451,7 +451,7 @@ QTabWidget::tab-bar:top {
            </attribute>
            <layout class="QVBoxLayout" name="ndCentralLayout">
             <item>
-             <layout class="QVBoxLayout" name="ndMainLayoutV" stretch="0,0,0,0,7,0,7,0,7,0">
+             <layout class="QVBoxLayout" name="ndMainLayoutV" stretch="0,0,0,0,10,0,7,0,7,0">
               <property name="spacing">
                <number>0</number>
               </property>
@@ -512,7 +512,7 @@ QTabWidget::tab-bar:top {
                </spacer>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="ndBlockInputLayoutH" stretch="5,4,2,5">
+               <layout class="QHBoxLayout" name="ndBlockInputLayoutHO" stretch="5,6,5">
                 <item>
                  <spacer name="ndBlockInputSpacerL">
                   <property name="orientation">
@@ -527,23 +527,154 @@ QTabWidget::tab-bar:top {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QLabel" name="ndBlockInputLbl">
-                  <property name="font">
-                   <font>
-                    <pointsize>9</pointsize>
-                   </font>
+                 <layout class="QVBoxLayout" name="ndBlockInputLayoutVO" stretch="0,0,0">
+                  <property name="spacing">
+                   <number>7</number>
                   </property>
-                  <property name="text">
-                   <string>Block everthing until:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="ndBlockInput">
-                  <property name="frame">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
+                  <item>
+                   <layout class="QHBoxLayout" name="ndBlockInputLayoutHI">
+                    <item>
+                     <layout class="QVBoxLayout" name="ndBlockInputLayoutVIL">
+                      <item>
+                       <widget class="QLabel" name="ndBlockInputLbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>9</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Block everthing until:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="ndSessionInputLbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>9</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Num of Sessions:</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="ndBlockInputSpacerBetween">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="ndBlockInputLayoutVIR">
+                      <item>
+                       <widget class="QLineEdit" name="ndBlockInput">
+                        <property name="frame">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="ndSessionInput">
+                        <property name="text">
+                         <string>1</string>
+                        </property>
+                        <property name="frame">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="Line" name="ndTotalBlockLine">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="ndTotalBlockLayoutH" stretch="6,4,1,3,6">
+                    <item>
+                     <spacer name="ndTotalBlockSpacerL">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="ndTotalBlockLbl">
+                      <property name="font">
+                       <font>
+                        <pointsize>9</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Total Goal:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="ndTotalBlockSpacerB">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="ndTotalBlockTxt">
+                      <property name="font">
+                       <font>
+                        <pointsize>9</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="ndTotalBlockSpacerR">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
                 </item>
                 <item>
                  <spacer name="ndBlockInputSpacerR">
@@ -853,7 +984,7 @@ QTabWidget::tab-bar:top {
                </spacer>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="odBlockInputLayoutH" stretch="5,4,2,5">
+               <layout class="QHBoxLayout" name="odBlockInputLayoutH" stretch="5,6,5">
                 <item>
                  <spacer name="odBlockInputSpacerL">
                   <property name="orientation">
@@ -868,23 +999,154 @@ QTabWidget::tab-bar:top {
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QLabel" name="odBlockInputLbl">
-                  <property name="font">
-                   <font>
-                    <pointsize>9</pointsize>
-                   </font>
+                 <layout class="QVBoxLayout" name="odBlockInputLayoutVO" stretch="0,0,0">
+                  <property name="spacing">
+                   <number>7</number>
                   </property>
-                  <property name="text">
-                   <string>Block everthing until:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLineEdit" name="odBlockInput">
-                  <property name="frame">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
+                  <item>
+                   <layout class="QHBoxLayout" name="odBlockInputLayoutHI">
+                    <item>
+                     <layout class="QVBoxLayout" name="odBlockInputLayoutVIL">
+                      <item>
+                       <widget class="QLabel" name="odBlockInputLbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>9</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Block everthing until:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="odSessionInputLbl">
+                        <property name="font">
+                         <font>
+                          <pointsize>9</pointsize>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>Num of Sessions:</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="odBlockInputSpacerBetween">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="odBlockInputLayoutVIR">
+                      <item>
+                       <widget class="QLineEdit" name="odBlockInput">
+                        <property name="frame">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="odSessionInput">
+                        <property name="text">
+                         <string>1</string>
+                        </property>
+                        <property name="frame">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <widget class="Line" name="odTotalBlockLine">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="odTotalBlockLayoutH" stretch="6,4,1,3,6">
+                    <item>
+                     <spacer name="odTotalBlockSpacerL">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="odTotalBlockLbl">
+                      <property name="font">
+                       <font>
+                        <pointsize>9</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>Total Goal:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="odTotalBlockSpacerB">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="odTotalBlockTxt">
+                      <property name="font">
+                       <font>
+                        <pointsize>9</pointsize>
+                       </font>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="odTotalBlockSpacerR">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
                 </item>
                 <item>
                  <spacer name="odBlockInputSpacerR">
