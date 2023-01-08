@@ -56,6 +56,9 @@
         </item>
         <item>
          <layout class="QVBoxLayout" name="topLayoutV">
+          <property name="spacing">
+           <number>9</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" name="titleLayoutH">
             <item>
@@ -217,89 +220,7 @@ background-color: #4d7182;
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="sessionLayoutH">
-            <item>
-             <spacer name="sessionSpacerHL">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="sessionLbl">
-              <property name="palette">
-               <palette>
-                <active>
-                 <colorrole role="WindowText">
-                  <brush brushstyle="SolidPattern">
-                   <color alpha="255">
-                    <red>62</red>
-                    <green>91</green>
-                    <blue>105</blue>
-                   </color>
-                  </brush>
-                 </colorrole>
-                </active>
-                <inactive>
-                 <colorrole role="WindowText">
-                  <brush brushstyle="SolidPattern">
-                   <color alpha="255">
-                    <red>62</red>
-                    <green>91</green>
-                    <blue>105</blue>
-                   </color>
-                  </brush>
-                 </colorrole>
-                </inactive>
-                <disabled>
-                 <colorrole role="WindowText">
-                  <brush brushstyle="SolidPattern">
-                   <color alpha="255">
-                    <red>120</red>
-                    <green>120</green>
-                    <blue>120</blue>
-                   </color>
-                  </brush>
-                 </colorrole>
-                </disabled>
-               </palette>
-              </property>
-              <property name="font">
-               <font>
-                <family>MS Shell Dlg 2</family>
-                <pointsize>10</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>Session 1 of 4</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="sessionSpacerHR">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="btnLayoutH" stretch="1,0,1,0,1">
+           <layout class="QHBoxLayout" name="btnLayoutH" stretch="1,5,1,5,1">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -679,6 +600,91 @@ background-color: #4d7182;
                <bool>true</bool>
               </property>
              </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="sessionLayoutH">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <spacer name="sessionSpacerHL">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="sessionLbl">
+              <property name="palette">
+               <palette>
+                <active>
+                 <colorrole role="WindowText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>62</red>
+                    <green>91</green>
+                    <blue>105</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </active>
+                <inactive>
+                 <colorrole role="WindowText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>62</red>
+                    <green>91</green>
+                    <blue>105</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </inactive>
+                <disabled>
+                 <colorrole role="WindowText">
+                  <brush brushstyle="SolidPattern">
+                   <color alpha="255">
+                    <red>120</red>
+                    <green>120</green>
+                    <blue>120</blue>
+                   </color>
+                  </brush>
+                 </colorrole>
+                </disabled>
+               </palette>
+              </property>
+              <property name="font">
+               <font>
+                <family>MS Shell Dlg 2</family>
+                <pointsize>10</pointsize>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Session 1 of 4</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="sessionSpacerHR">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </item>
