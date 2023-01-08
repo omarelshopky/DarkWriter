@@ -8,6 +8,7 @@ A Stubborn text editor that will block other apps from distracting you until you
 - The writing goal can be specified in two ways:
   - Words count
   - A time period in minutes
+- The ability of dividing big goals into smaller sessions
 - Autosaving each 5sec
 - Writing space exactly fit one paragraph so you can concentrate on writing paragraph by paragraph with the ability to navigate between them.
 - A new paragraph is created when you press enter or the writing space is full.

@@ -27,3 +27,7 @@ class MainStack(QStackedWidget):
         self.addWidget(OptionWindow(self))
         self.addWidget(WritingWindow(self))
         self.show()
+
+    def close(self) -> None:
+        self.currentWidget().close()
+        super().close()

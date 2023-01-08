@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QMainWindow, QStackedWidget
 from PyQt5.QtCore import QTimer, Qt, QEvent
 import keyboard
+from cenum.AppWindow import AppWindow
 from designPy.writingWindowUI import Ui_WritingWindow
 from util.FileHandler import FileHandler
 from util.WindowSizer import WindowSizer
@@ -22,69 +23,10 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         List contains the words count of each paragraph
     isDisappearble: bool
         Is the disappearing feature are enable or not
-    saving: bool
+    duringSavingProcess: bool
         Is the app is currently in saving process
     reachMax: bool
         If the user reach the maximum number of lines for a paragraph
-
-    Methods
-    -------
-    _setupEvents()
-        Setup all events in the UI components
-    _setWritingAreaSize()
-        Set writing area size according to display resolution
-    _hideNavigation()
-        Hide paragraph navigation arrows
-    calculateLineHeight()
-        Calculate writing area's line height
-    setBlocking(amount, isTime)
-        Sets Blocking Attributes from the option window
-    setFilePath(path)
-        Set the file path to read and write
-    _startTimers()
-        Start All needed timers
-    _activateProgressBar()
-        Active progress bar timer
-    _updateProgressbar()
-        Update the progress value and restart the timer if not 100%
-    _updateProgressValue()
-        Update the progress bar value
-    _startProgressTimer(timeInMin)
-        Start the progress timer for time blocking sessions
-    _stopProgressTimer()
-        Stop the progress timer for time blocking sessions
-    _showEndSessionBtns()
-        Show snooze and Quit buttons with hiding progress bar
-    _hideEndSessionBtns()
-        Hide snooze and Quit buttons with showing progress bar
-    _closeApp()
-        Saves the file and Closes the app
-    _addSnooze()
-        Block for additional 10 minutes
-    setContent()
-        Set writing area content according to current paragraph index
-    updateContent()
-        Update writing area content
-    countWords(paragraphIndex)
-        Count number of words in the current paragraph
-    _getWordsTyped()
-        Gets number of words in the whole file
-    _disapearWord()
-        Remove the last word from the content
-    setCursor(position)
-        Set the cursor in specific position
-    eventFilter(obj, event)
-        Detect pressing Enter
-    _checkLines()
-        Check that lines reach maximum
-    _createNewParagraph()
-        Create new paragraph
-    _setIsDisappearable(isDisappearable=False)
-        Set is disapperable attribute
-    _nextParagraph()
-        Go to the next paragraph
-    _previousParagraph(isSet=True)
-        Go back to the previous paragraph
     """
     def __init__(self, mainStack: QStackedWidget) -> None:
         super().__init__()
@@ -94,18 +36,25 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.contentLines = []
         self.wordsCount = [0]
         self.isDisappearable = True
-        self.saving = False
+        self.duringSavingProcess = False
         self.reachMax = False
         self.setupUi(self)
         self._setupEvents()
         self._hideNavigation()
+        self._setWritingAreaSize()
 
     def _setupEvents(self) -> None:
         """Setup all events in the UI components"""
-        self.saveAndQuitBtn.clicked.connect(lambda: self._closeApp())
+        self.saveAndQuitBtn.clicked.connect(lambda: self._saveAndClose())
+        self.saveAndContinueBtn.clicked.connect(lambda: self._saveAndContinue())
         self.snoozeBtn.clicked.connect(lambda: self.__addSnooze())
         self.textEdit.document().contentsChanged.connect(lambda: self._setIsDisappearable())
         self.textEdit.installEventFilter(self) # Catch pressing on keyboard
+
+    def _hideNavigation(self) -> None:
+        """Hide paragraph navigation arrows"""
+        self.nextBtn.hide()
+        self.previousBtn.hide()
 
     def _setWritingAreaSize(self) -> None:
         """Set writing area size according to display resolution"""
@@ -117,25 +66,44 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         except:
             self.textEdit.document().setDocumentMargin(90)
 
-    def _hideNavigation(self) -> None:
-        """Hide paragraph navigation arrows"""
-        self.nextBtn.hide()
-        self.previousBtn.hide()
+    def startBlockingSessions(self, filePath: str, isNewDraft: bool, blockingAttributes: dict) -> None:
+        """start blocking session
 
-    def calculateLineHeight(self) -> None:
-        """Calculate writing area's line height"""
-        self._setWritingAreaSize()
-        self.textEdit.setPlainText('o')
-        firstLine = self.textEdit.document().size().height()
-        self.textEdit.clear()
-        self.textEdit.setPlainText('o\no')
-        secondLine = self.textEdit.document().size().height()
-        self.textEdit.clear()
-        self.maxLinesHeight = firstLine + 5 * (secondLine - firstLine)
-        self.textEdit.setMaximumHeight(self.maxLinesHeight)
-        self.textEdit.setMinimumHeight(self.maxLinesHeight)
+        Parameters
+        ----------
+        filePath: str
+            The file path
+        isNewDraft: bool
+            if the session is new draft or open existing one
+        blockingAttributes: dict
+            the blocking attributes like amount and is time or words count
+        """
+        self._setFilePath(filePath)
+        self._setBlocking(blockingAttributes["blockingAmount"], blockingAttributes["isTimeBlocking"])
+        self._setNumOfSessions(blockingAttributes["numOfSessions"])
+        self.mainStack.setCurrentIndex(AppWindow.WRITING_WINDOW.value)
+        self._calculateMaximumHeight()
+        self._startTimers()
 
-    def setBlocking(self, amount: int, isTime: bool) -> None:
+        if isNewDraft == False:
+            self.fileHandler.loadFromFile()
+            self.currentParLbl.setText(str(len(writingWindow.contentLines) - 1))
+            self.updateContent()
+            self._setCursor(writingWindow.textEdit.document().characterCount() - 1)
+            self.duringSavingProcess = True
+
+    def _setFilePath(self, path: str) -> None:
+        """Set the file path to read and write
+
+        Parameters
+        ----------
+        path: str
+            The file path
+        """
+        self.filePath = path
+        self.fileHandler.setFilePath(path)
+
+    def _setBlocking(self, amount: int, isTime: bool) -> None:
         """Sets Blocking Attributes from the option window
 
         Parameters
@@ -148,17 +116,29 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.blockingAmount = amount
         self.blockingInTime = isTime
 
-    def setFilePath(self, path: str) -> None:
-        """Set the file path to read and write
+    def _setNumOfSessions(self, numOfSessions: int) -> None:
+        """Sets number of blocking sessions
 
         Parameters
         ----------
-        path: str
-            The file path
+        numOfSessions: int
+            the num of blocking sessions
         """
-        self.filePath = path
-        self.fileHandler.setFilePath(path)
-        self._startTimers()
+        self.numOfSessions = int(numOfSessions)
+        self.currentSession = 1
+        self._setSessionLabel()
+
+    def _calculateMaximumHeight(self) -> None:
+        """Calculate writing area's line height"""
+        self.textEdit.setPlainText('o')
+        firstLine = self.textEdit.document().size().height()
+        self.textEdit.clear()
+        self.textEdit.setPlainText('o\no')
+        secondLine = self.textEdit.document().size().height()
+        self.textEdit.clear()
+        self.maxLinesHeight = firstLine + 5 * (secondLine - firstLine)
+        self.textEdit.setMaximumHeight(self.maxLinesHeight)
+        self.textEdit.setMinimumHeight(self.maxLinesHeight)
 
     def _startTimers(self) -> None:
         """Start All needed timers"""
@@ -171,7 +151,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self._activateProgressBar()
 
         self.wordDisappearTimer = QTimer()
-        self.wordDisappearTimer.timeout.connect(lambda: self._disapearWord())
+        self.wordDisappearTimer.timeout.connect(lambda: self._disappearWord())
         self.wordDisappearTimer.start(3000)
 
         self.checkLinesTimer = QTimer()
@@ -179,6 +159,10 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.checkLinesTimer.start(10)
 
         self.fileHandler.enableAutosave()
+
+    def _restartWordDisappearTimer(self):
+        """Restart the word disappear timer"""
+        self.wordDisappearTimer.start(3000)
 
     def _activateProgressBar(self) -> None:
         """Active progress bar timer"""
@@ -196,7 +180,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         """Update the progress value and restart the timer if not 100%"""
         if int(self._updateProgressValue()) == 100:
             self._showEndSessionBtns()
-            self.saving = True
+            self.duringSavingProcess = True
             self.updateProgressTimer.stop()
 
     def _updateProgressValue(self) -> float:
@@ -235,28 +219,54 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     def _showEndSessionBtns(self) -> None:
         """Show snooze and Quit buttons with hiding progress bar"""
         self.progressBar.hide()
-        self.snoozeBtn.show()
-        self.saveAndQuitBtn.show()
+        self.sessionLbl.hide()
+
+        if self.currentSession == self.numOfSessions:
+            self.snoozeBtn.show()
+            self.saveAndQuitBtn.show()
+        else:
+            self.saveAndContinueBtn.show()
 
     def _hideEndSessionBtns(self) -> None:
         """Hide snooze and Quit buttons with showing progress bar"""
         self.progressBar.show()
+        self.sessionLbl.show()
         self.snoozeBtn.hide()
         self.saveAndQuitBtn.hide()
+        self.saveAndContinueBtn.hide()
         self.progressBar.setValue(0)
 
-    def _closeApp(self) -> None:
-        """Saves the file and Closes the app"""
-        self._setIsDisappearable()
+    def _saveAndClose(self):
+        """Saves the file and close the app if success"""
+        if self._saveSession():
+            self._closeApp()
 
-        if self.fileHandler.saveToFile(False) == True: # Successfully save the file
-            self.close()
-            self.mainStack.close()
+    def _saveAndContinue(self):
+        """Saves the file and continue the next session"""
+        if self._saveSession():
+            self.currentSession += 1
+            self._setSessionLabel()
+            self.loadedWords += self._getWordsTyped()
+            self.duringSavingProcess = False
+            self._activateProgressBar()
+
+    def _saveSession(self):
+        """Saves the current content to file"""
+        self.duringSavingProcess = True
+        savingStatus = self.fileHandler.saveToFile(False)
+        self.duringSavingProcess = not savingStatus
+        self._restartWordDisappearTimer()
+
+        return savingStatus
+
+    def _closeApp(self) -> None:
+        """Closes the app"""
+        self.mainStack.close()
 
     def _addSnooze(self):
         """Block for additional 10 minutes"""
-        self.saving = False
-        self.setBlocking(10, True)
+        self.duringSavingProcess = False
+        self._setBlocking(10, True)
         self._activateProgressBar()
 
     def setContent(self) -> None:
@@ -312,9 +322,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         else:
             return currentWords - self.loadedWords
 
-    def _disapearWord(self) -> None:
+    def _disappearWord(self) -> None:
         """Remove the last word from the content"""
-        if self.isDisappearable and not self.saving:
+        if self.isDisappearable and not self.duringSavingProcess:
             self.setContent()
             index = int(self.currentParLbl.text())
 
@@ -333,11 +343,11 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                 self.contentLines[index][-1] = ' '.join(line.split(' ')[:-1])
 
             self.updateContent()
-            self.setCursor(self.textEdit.document().characterCount() - 1) # Set cursor at the end of text
+            self._setCursor(self.textEdit.document().characterCount() - 1) # Set cursor at the end of text
 
         self.isDisappearable = True
 
-    def setCursor(self, position: int) -> None:
+    def _setCursor(self, position: int) -> None:
         """Set the cursor in specific position
 
         Parameters
@@ -354,7 +364,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
         Parameters
         ----------
-        obj: 
+        obj:
             The object that fetch the event
         event:
             The pressing event
@@ -377,7 +387,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     self.contentLines.pop(index)
                     self.contentLines[index-1][-1] += ' '
                     self._previousParagraph(False)
-                    self.setCursor(self.textEdit.document().characterCount() - 1) # Set cursor at the end of text
+                    self._setCursor(self.textEdit.document().characterCount() - 1) # Set cursor at the end of text
 
             # if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
             #     self.close()
@@ -426,6 +436,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             The attribute value
         """
         self.isDisappearable = isDisappearable
+        if isDisappearable: self._restartWordDisappearTimer()
 
     def _nextParagraph(self):
         """Go to the next paragraph"""
@@ -446,3 +457,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             if isSet: self.setContent()
             self.currentParLbl.setText(str(int(self.currentParLbl.text()) - 1))
             self.updateContent()
+
+    def _setSessionLabel(self):
+        """Sets session label with current progress"""
+        self.sessionLbl.setText(f"Session {self.currentSession} of {self.numOfSessions}")
