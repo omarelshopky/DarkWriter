@@ -3,7 +3,9 @@ from PyQt5.QtGui import QIntValidator
 from cenum.AppWindow import AppWindow
 from cenum.OptionTab import OptionTab
 from designPy.optionWindowUI import Ui_optionWindow
+from util.IconDecoder import IconDecoder
 from util.PathResolver import PathResolver
+from widget.SettingsDialog import SettingsDialog
 
 class OptionWindow(QMainWindow, Ui_optionWindow):
     """Startup window that shows the available starting options and goal definitions
@@ -26,6 +28,10 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         self._enableInputValidation()
         self.components = self._prepareTabComponents()
 
+    def setupUi(self, optionWindow):
+        super().setupUi(optionWindow)
+        self.settingsBtn.setIcon(IconDecoder().getDecodedIcon("settings"))
+
     def _setupEvents(self) -> None:
         """Setup all events in the UI components"""
         # Open writing window
@@ -47,6 +53,8 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         self.odBlockInput.textChanged.connect(lambda: self._handleChangeBlockingAttribute())
         self.ndSessionInput.textChanged.connect(lambda: self._handleChangeBlockingAttribute())
         self.odSessionInput.textChanged.connect(lambda: self._handleChangeBlockingAttribute())
+
+        self.settingsBtn.clicked.connect(lambda: self._openSettingsDialog())
 
     def _enableInputValidation(self) -> None:
         """Make blocking input box accept only integers"""
@@ -163,3 +171,7 @@ class OptionWindow(QMainWindow, Ui_optionWindow):
         """Handle changing text for any of the blocking attributes"""
         self._calculateTotalBlockGoal()
         self._enableStart()
+
+    def _openSettingsDialog(self) -> None:
+        settingsDialog = SettingsDialog(self)
+        settingsDialog.exec()
