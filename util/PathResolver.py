@@ -15,6 +15,8 @@ class PathResolver():
     -------
     getNewFilePath()
         Gets the path of the new created file in default dir
+    getAppDirPath()
+        Gets the path of the app directory
     _getCurrentDateTime()
         Gets current date time in specific formate
     """
@@ -29,34 +31,57 @@ class PathResolver():
         str
             The path to newly created file
         """
+        filePath = self.joinPath(self.getAppDirPath(), self._getCurrentDateTime() + '.txt')
+
+    def joinPath(self, dir: str, file: str) -> str:
+        """Joins file with directory to get the full path
+
+        Parameters
+        ----------
+        dir: str
+            The directory path
+        file: str
+            The file name
+
+        Returns
+        -------
+        str:
+            The full path to the file
+        """
+        return os.path.join(dir, file)
+
+    def getAppDirPath(self) -> str:
+        """Gets the path of the app directory
+
+        Returns
+        -------
+        str
+            The path to the app directory
+        """
         try:
             try:
-                defaultPath = os.path.expanduser(f'~/My Documents/{self.appDirName}/')
+                appDirPath = os.path.expanduser(f'~/My Documents/{self.appDirName}/')
 
-                if not os.path.exists(defaultPath):
-                    os.makedirs(defaultPath)
+                if not os.path.exists(appDirPath):
+                    os.makedirs(appDirPath)
 
-                filePath = os.path.join(defaultPath, self._getCurrentDateTime() + '.txt')
+                return appDirPath
             except Exception as e:
-                # print(str(e))
-
                 CSIDL_PERSONAL = 5       # My Documents
                 SHGFP_TYPE_CURRENT = 0   # Get current, not default value
 
                 docDirBuffer = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
                 ctypes.windll.shell32.SHGetFolderPathW(None, CSIDL_PERSONAL, None, SHGFP_TYPE_CURRENT, docDirBuffer)
 
-                defaultPath = f'{docDirBuffer.value}\\{self.appDirName}'
+                appDirPath = f'{docDirBuffer.value}\\{self.appDirName}'
 
-                if not os.path.exists(defaultPath):
-                    os.mkdir(defaultPath, 0o777)
+                if not os.path.exists(appDirPath):
+                    os.mkdir(appDirPath, 0o777)
 
-                filePath = os.path.join(defaultPath, self._getCurrentDateTime() + '.txt')
+                return appDirPath
         except Exception as e:
             # print(str(e))
-            pass
-
-        return filePath
+            return ""
 
     def _getCurrentDateTime(self) -> str:
         """Gets current date time in specific formate

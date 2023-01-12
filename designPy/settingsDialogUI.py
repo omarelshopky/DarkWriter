@@ -15,9 +15,9 @@ class Ui_SettingsDialog(object):
     def setupUi(self, SettingsDialog):
         SettingsDialog.setObjectName("SettingsDialog")
         SettingsDialog.setEnabled(True)
-        SettingsDialog.resize(400, 200)
-        SettingsDialog.setMinimumSize(QtCore.QSize(400, 200))
-        SettingsDialog.setMaximumSize(QtCore.QSize(400, 200))
+        SettingsDialog.resize(500, 200)
+        SettingsDialog.setMinimumSize(QtCore.QSize(500, 200))
+        SettingsDialog.setMaximumSize(QtCore.QSize(500, 200))
         font = QtGui.QFont()
         font.setPointSize(9)
         SettingsDialog.setFont(font)

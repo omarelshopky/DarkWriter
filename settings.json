@@ -1,6 +1,7 @@
 {
     "app-dir-name" : "KEYBOARDCOWBOY",
     "autosave-period" : 5000,
+    "user-settings-file-name" : ".user-settings.json",
     "saving-status-message" : {
         "success" : {
             "title" : "Well Done!",
@@ -10,6 +11,11 @@
             "title" : "Sorry!",
             "content" : "There is an error saving your draft here\n\nFILE_PATH"
         }
+    },
+    "booster-images" : {
+        "enabled" : false,
+        "words-goal" : 100,
+        "images-folder" : ""
     },
     "writing-area-size" : {
         "1920" : { "1080" : [928, 102] },
