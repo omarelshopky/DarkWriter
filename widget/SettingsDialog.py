@@ -77,7 +77,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         imgsFolder = self._getBoosterImgFolder()
         imgsCount = self.imagesChecker.checkImagesDir(imgsFolder)
 
-        if isEnabled and wordGoal and imgsFolder and imgsCount > 0:
+        if wordGoal and imgsFolder and imgsCount > 0:
             self.settingsReader.setBoosterImagesSettings(isEnabled, int(wordGoal), imgsFolder)
 
     def _getBoosterImgIsEnabled(self) -> bool:
