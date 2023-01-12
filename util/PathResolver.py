@@ -31,7 +31,7 @@ class PathResolver():
         str
             The path to newly created file
         """
-        filePath = self.joinPath(self.getAppDirPath(), self._getCurrentDateTime() + '.txt')
+        return self.joinPath(self.getAppDirPath(), self._getCurrentDateTime() + '.txt')
 
     def joinPath(self, dir: str, file: str) -> str:
         """Joins file with directory to get the full path

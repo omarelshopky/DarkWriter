@@ -1,7 +1,17 @@
 import json
 import util.PathResolver as PathResolver
 
-USER_SETTINGS = ["booster-images"]
+USER_SETTINGS_KEYS = ["booster-images"]
+DEFAULT_SETTINGS_FILE_PATH = "./settings.json"
+APP_DIR_NAME = "app-dir-name"
+SAVING_STATUS_MESSAGE = "saving-status-message"
+WRITING_AREA_SIZE = "writing-area-size"
+AUTOSAVE_PERIOD = "autosave-period"
+USER_SETTINGS_FILE_NAME = "user-settings-file-name"
+BOOSTER_IMAGES = "booster-images"
+BOOSTER_IMAGES_IS_ENABLED = "enabled"
+BOOSTER_IMAGES_WORDS_GOAL = "words-goal"
+BOOSTER_IMAGES_FOLDER_PATH = "images-folder"
 
 class SettingsReader:
     """Singleton Class handle reading app settings from json file
@@ -59,7 +69,7 @@ class SettingsReader:
 
     def _loadDefaultSettings(self) -> None:
         """Loads the default settings registered in the app"""
-        self._settings = self._loadSettingsFromJson("./settings.json")
+        self._settings = self._loadSettingsFromJson(DEFAULT_SETTINGS_FILE_PATH)
 
     def _loadUserSettings(self) -> None:
         """Loads the user settings located locally"""
@@ -113,7 +123,7 @@ class SettingsReader:
         """
         self._settings[key] = value
 
-        if key in USER_SETTINGS:
+        if key in USER_SETTINGS_KEYS:
             self._userSettings[key] = value
             self._saveUserSettingsToJson()
 
@@ -125,7 +135,7 @@ class SettingsReader:
         str
             App directory name
         """
-        return self._getSettings()["app-dir-name"]
+        return self._getSettings()[APP_DIR_NAME]
 
     def getSaveStatusSettings(self) -> dict:
         """Get settings related to save status.
@@ -135,7 +145,7 @@ class SettingsReader:
         dict
             Dictionary hold settings related to save status
         """
-        return self._getSettings()["saving-status-message"]
+        return self._getSettings()[SAVING_STATUS_MESSAGE]
 
     def getWritingAreaSizeSettings(self) -> dict:
         """Get settings related to writing area sizes.
@@ -145,7 +155,7 @@ class SettingsReader:
         dict
             Dictionary hold settings related to writing area sizes
         """
-        return self._getSettings()["writing-area-size"]
+        return self._getSettings()[WRITING_AREA_SIZE]
 
     def getAutosavePeriod(self) -> int:
         """Get auto save period specified in settings
@@ -155,7 +165,7 @@ class SettingsReader:
         int
             autosaving period specified in millisecond
         """
-        return self._getSettings()["autosave-period"]
+        return self._getSettings()[AUTOSAVE_PERIOD]
 
     def getUserSettingsFilePath(self) -> str:
         """Get user settings file path
@@ -165,7 +175,7 @@ class SettingsReader:
         str
             path to user settings file
         """
-        return self._pathResolver.joinPath(self._pathResolver.getAppDirPath(), self._settings["user-settings-file-name"])
+        return self._pathResolver.joinPath(self._pathResolver.getAppDirPath(), self._settings[USER_SETTINGS_FILE_NAME])
 
     def getBoosterImagesSettings(self) -> dict:
         """Get booster images settings
@@ -175,7 +185,7 @@ class SettingsReader:
         dict
             Dictionary hold settings related to booster images feature
         """
-        return self._getSettings()["booster-images"]
+        return self._getSettings()[BOOSTER_IMAGES]
 
     def setBoosterImagesSettings(self, isEnabled: bool, wordGoal: int, imgFolder: str) -> None:
         """Sets booster images settings
@@ -190,10 +200,10 @@ class SettingsReader:
             the folder that contains the images to display
         """
         self._setSettings(
-            "booster-images",
+            BOOSTER_IMAGES,
             {
-                "enabled": isEnabled,
-                "words-goal": wordGoal,
-                "images-folder": imgFolder
+                BOOSTER_IMAGES_IS_ENABLED: isEnabled,
+                BOOSTER_IMAGES_WORDS_GOAL: wordGoal,
+                BOOSTER_IMAGES_FOLDER_PATH: imgFolder
             }
         )
