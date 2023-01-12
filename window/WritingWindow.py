@@ -4,7 +4,9 @@ import keyboard
 from cenum.AppWindow import AppWindow
 from designPy.writingWindowUI import Ui_WritingWindow
 from util.FileHandler import FileHandler
+from util.SettingsReader import SettingsReader, BOOSTER_IMAGES_WORDS_GOAL, BOOSTER_IMAGES_IS_ENABLED
 from util.WindowSizer import WindowSizer
+from widget.BoosterImageWidget import BoosterImageWidget
 
 class WritingWindow(QMainWindow, Ui_WritingWindow):
     """Writing window widget
@@ -78,6 +80,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         blockingAttributes: dict
             the blocking attributes like amount and is time or words count
         """
+        self._boosterImageWidget = BoosterImageWidget(self)
+        self._boosterImgSettings = SettingsReader().getBoosterImagesSettings()
+        self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
         self._setFilePath(filePath)
         self._setBlocking(blockingAttributes["blockingAmount"], blockingAttributes["isTimeBlocking"])
         self._setNumOfSessions(blockingAttributes["numOfSessions"])
@@ -191,14 +196,17 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         int
             progress value in percent
         """
+        wordsTyped = self._getWordsTyped()
+
         if self.blockingInTime:
             remain = self.progressTimer.remainingTime() / 60000
         else:
-            remain = int(self.blockingAmount) - self._getWordsTyped()
+            remain = int(self.blockingAmount) - wordsTyped
 
         amount = 100 - ((remain / int(self.blockingAmount)) * 100)
 
         self.progressBar.setValue(amount)
+        self._checkBoosterGoal(wordsTyped)
 
         return amount
 
@@ -247,6 +255,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             self.currentSession += 1
             self._setSessionLabel()
             self.loadedWords += self._getWordsTyped()
+            self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
             self.duringSavingProcess = False
             self._activateProgressBar()
 
@@ -461,3 +470,8 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
     def _setSessionLabel(self):
         """Sets session label with current progress"""
         self.sessionLbl.setText(f"Session {self.currentSession} of {self.numOfSessions}")
+
+    def _checkBoosterGoal(self, wordsTyped):
+        if self._boosterImgSettings[BOOSTER_IMAGES_IS_ENABLED] and wordsTyped >= self._currentBoosterGoal:
+            self._boosterImageWidget.display()
+            self._currentBoosterGoal += self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]

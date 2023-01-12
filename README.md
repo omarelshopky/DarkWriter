@@ -14,6 +14,10 @@ A Stubborn text editor that will block other apps from distracting you until you
 - A new paragraph is created when you press enter or the writing space is full.
 - There is a progress bar displaying the current progress done in the specified goal.
 - Need more boosters? if you stop writing for more than 3sec a word will disappear every 3 seconds, don't stop writing :)
+- Booster images popup to courage you when type specific number of words
+  - You can enable and disable the feature from settings page
+  - The typed words goal is dynamic. Change it as you want!
+  - Ability to select folder contains images to use as boosters
 
 ## Usage
 You can wether download the executable file or compile it yourself using the following command
