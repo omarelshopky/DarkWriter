@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import QDialog, QMainWindow, QFileDialog
 from designPy.settingsDialogUI import Ui_SettingsDialog
+from util.ImagesChecker import ImagesChecker
 from util.SettingsReader import SettingsReader
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
@@ -29,6 +30,7 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
     def __init__(self, parentWindow: QMainWindow):
         super().__init__(parentWindow)
         self.settingsReader = SettingsReader()
+        self.imagesChecker = ImagesChecker()
         self.setupUi(self)
         self._setupEvents()
         self._enableInputValidation()
@@ -58,15 +60,25 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
     def _browseImageFolder(self) -> None:
         """Open browse folder dialog to get images folder"""
         folderPath = QFileDialog.getExistingDirectory(self, "Select Booster Images Folder")
-        self.BImageFolderPathLbl.setText(folderPath)
+        imgsCount = self.imagesChecker.checkImagesDir(folderPath)
+
+        if imgsCount > 0:
+            self.BImageFolderPathLbl.setText(folderPath)
+            self.errorLbl.hide()
+        else:
+            self.BImageFolderPathLbl.setText("")
+            self.errorLbl.setText("The folder you selected doesn't contain any images, please select another one")
+            self.errorLbl.show()
 
     def _saveSettings(self) -> None:
         """Saves the settings modified in dialog"""
-        self.settingsReader.setBoosterImagesSettings(
-            self._getBoosterImgIsEnabled(),
-            self._getBoosterImgWordGoal(),
-            self._getBoosterImgFolder()
-        )
+        isEnabled = self._getBoosterImgIsEnabled()
+        wordGoal = self._getBoosterImgWordGoal()
+        imgsFolder = self._getBoosterImgFolder()
+        imgsCount = self.imagesChecker.checkImagesDir(imgsFolder)
+
+        if isEnabled and wordGoal and imgsFolder and imgsCount > 0:
+            self.settingsReader.setBoosterImagesSettings(isEnabled, int(wordGoal), imgsFolder)
 
     def _getBoosterImgIsEnabled(self) -> bool:
         """Getter for booster image is enabled

@@ -91,6 +91,17 @@ class Ui_SettingsDialog(object):
         self.BIdetailsInputVLayout.addLayout(self.BImageFoldertHLayout)
         self.horizontalLayout.addLayout(self.BIdetailsInputVLayout)
         self.verticalLayout.addWidget(self.BoosterImgSettingsGBox)
+        self.errorLbl = QtWidgets.QLabel(SettingsDialog)
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        self.errorLbl.setFont(font)
+        self.errorLbl.setStyleSheet("QLabel {\n"
+"    color: red;\n"
+"}")
+        self.errorLbl.setText("")
+        self.errorLbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.errorLbl.setObjectName("errorLbl")
+        self.verticalLayout.addWidget(self.errorLbl)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
         self.buttonBox = QtWidgets.QDialogButtonBox(SettingsDialog)
