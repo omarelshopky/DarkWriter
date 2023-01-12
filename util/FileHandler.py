@@ -46,7 +46,7 @@ class FileHandler:
         path: str
             The file path
         """
-        self.filePath = path.replace('\\', '/')
+        self._filePath = path.replace('\\', '/')
 
     def saveToFile(self, isAuto: bool = True):
         """Save the text to file
@@ -66,44 +66,45 @@ class FileHandler:
 
             if not isAuto:
                 # Open browse to enable user to choose a location
-                fname = QFileDialog.getSaveFileName(self.writingWindow, 'Save File', self.filePath, 'Text Files (*.txt)')[0]
+                fname = QFileDialog.getSaveFileName(self.writingWindow, 'Save File', self._filePath, 'Text Files (*.txt)')[0]
 
                 if fname != '':
-                    self.filePath = fname
+                    self._filePath = fname
                 else:
                     return False
 
-            if os.path.exists(self.filePath):
-                os.remove(self.filePath)
+            if os.path.exists(self._filePath):
+                os.remove(self._filePath)
 
-            with open(self.filePath, 'w') as file:
+            with open(self._filePath, 'w') as file:
                 text = ''
                 for paragraph in self.writingWindow.contentLines:
                     text += ' '.join(paragraph)
-                    text += '\n'
+                    text += '\n\n'
 
                 file.write(text)
                 del text
                 file.close()
 
             if not isAuto:
-                self.statusMessageBox.displaySuccess(self.filePath)
+                self.statusMessageBox.displaySuccess(self._filePath)
 
             return True
 
         except Exception as e:
-            self.statusMessageBox.displayFail(self.filePath + '\n' + str(e))
+            self.statusMessageBox.displayFail(self._filePath + '\n' + str(e))
             return False
 
     def loadFromFile(self) -> None:
         """Load the text from file"""
         contentLines = []
 
-        with open(self.filePath, 'r') as file:
+        with open(self._filePath, 'r') as file:
             lines = file.readlines()
 
             for line in lines:
-                contentLines.append([line.strip()])
+                line = line.strip()
+                if line: contentLines.append([line])
 
             del lines
             file.close()
