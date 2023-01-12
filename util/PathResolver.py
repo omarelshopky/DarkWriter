@@ -91,5 +91,5 @@ class PathResolver():
         str
             Current datetime
         """
-        return datetime.now().strftime("%Y-%m-%d_%H-%M") # dd-mm-YY_H-M
+        return datetime.now().strftime("%Y-%m-%d_%H-%M-%S") # dd-mm-YY_Hour-Min-Sec
 

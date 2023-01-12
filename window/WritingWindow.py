@@ -5,6 +5,7 @@ from cenum.AppWindow import AppWindow
 from designPy.writingWindowUI import Ui_WritingWindow
 from util.FileHandler import FileHandler
 from util.SettingsReader import SettingsReader, BOOSTER_IMAGES_WORDS_GOAL, BOOSTER_IMAGES_IS_ENABLED
+from util.PathResolver import PathResolver
 from util.WindowSizer import WindowSizer
 from widget.BoosterImageWidget import BoosterImageWidget
 
@@ -34,6 +35,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         super().__init__()
         self.mainStack = mainStack
         self.fileHandler = FileHandler(self)
+        self._pathResolver = PathResolver()
         self.loadedWords = 0
         self.contentLines = []
         self.wordsCount = [0]
@@ -80,6 +82,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         blockingAttributes: dict
             the blocking attributes like amount and is time or words count
         """
+        self._isNewDraft = isNewDraft
         self._boosterImageWidget = BoosterImageWidget(self)
         self._boosterImgSettings = SettingsReader().getBoosterImagesSettings()
         self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
@@ -92,9 +95,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
         if isNewDraft == False:
             self.fileHandler.loadFromFile()
-            self.currentParLbl.setText(str(len(writingWindow.contentLines) - 1))
+            self.currentParLbl.setText(str(len(self.contentLines) - 1))
             self.updateContent()
-            self._setCursor(writingWindow.textEdit.document().characterCount() - 1)
+            self._setCursorAfterLastChar()
             self.duringSavingProcess = True
 
     def _setFilePath(self, path: str) -> None:
@@ -254,6 +257,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         if self._saveSession():
             self.currentSession += 1
             self._setSessionLabel()
+            self._updateFilePath()
             self.loadedWords += self._getWordsTyped()
             self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
             self.duringSavingProcess = False
@@ -277,6 +281,11 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.duringSavingProcess = False
         self._setBlocking(10, True)
         self._activateProgressBar()
+
+    def _updateFilePath(self) -> None:
+        """Update the file path with new one"""
+        if self._isNewDraft:
+            self._setFilePath(self._pathResolver.getNewFilePath())
 
     def setContent(self) -> None:
         """Set writing area content according to current paragraph index"""
@@ -352,7 +361,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                 self.contentLines[index][-1] = ' '.join(line.split(' ')[:-1])
 
             self.updateContent()
-            self._setCursor(self.textEdit.document().characterCount() - 1) # Set cursor at the end of text
+            self._setCursorAfterLastChar()
 
         self.isDisappearable = True
 
@@ -367,6 +376,10 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         cursor = self.textEdit.textCursor()
         cursor.setPosition(cursor.position() + position)
         self.textEdit.setTextCursor(cursor)
+    
+    def _setCursorAfterLastChar(self) -> None:
+        """Sets the cursor at the end of the text"""
+        self._setCursor(self.textEdit.document().characterCount() - 1)
 
     def eventFilter(self, obj: QWidget, event: QEvent) -> bool:
         """Detect pressing Enter
@@ -396,7 +409,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     self.contentLines.pop(index)
                     self.contentLines[index-1][-1] += ' '
                     self._previousParagraph(False)
-                    self._setCursor(self.textEdit.document().characterCount() - 1) # Set cursor at the end of text
+                    self._setCursorAfterLastChar()
 
             # if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
             #     self.close()
