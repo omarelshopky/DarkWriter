@@ -1,8 +1,8 @@
 import json
+from config.settings import settings
 import util.PathResolver as PathResolver
 
 USER_SETTINGS_KEYS = ["booster-images"]
-DEFAULT_SETTINGS_FILE_PATH = "./settings.json"
 APP_DIR_NAME = "app-dir-name"
 SAVING_STATUS_MESSAGE = "saving-status-message"
 WRITING_AREA_SIZE = "writing-area-size"
@@ -69,7 +69,7 @@ class SettingsReader:
 
     def _loadDefaultSettings(self) -> None:
         """Loads the default settings registered in the app"""
-        self._settings = self._loadSettingsFromJson(DEFAULT_SETTINGS_FILE_PATH)
+        self._settings = settings
 
     def _loadUserSettings(self) -> None:
         """Loads the user settings located locally"""

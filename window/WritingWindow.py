@@ -415,9 +415,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     self._previousParagraph(False)
                     self._setCursorAfterLastChar()
 
-            if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
-                self.close()
-                self.mainStack.close()
+            # if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
+            #     self.close()
+            #     self.mainStack.close()
 
         return super().eventFilter(obj, event)
 

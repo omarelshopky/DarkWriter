@@ -1,4 +1,4 @@
-{
+settings = {
     "app-dir-name" : "KEYBOARDCOWBOY",
     "autosave-period" : 5000,
     "user-settings-file-name" : ".user-settings.json",
@@ -13,7 +13,7 @@
         }
     },
     "booster-images" : {
-        "enabled" : false,
+        "enabled" : False,
         "words-goal" : 100,
         "images-folder" : ""
     },

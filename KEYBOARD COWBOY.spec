@@ -4,7 +4,7 @@
 block_cipher = None
 
 
-a = Analysis(['E:\\Work\\Desktop Application\\Dark Turkey Writer\\DarkTurkeyWriter.py'],
+a = Analysis(['main.py'],
              pathex=[],
              binaries=[],
              datas=[],
@@ -37,4 +37,4 @@ exe = EXE(pyz,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None , icon='E:\\Work\\Desktop Application\\Dark Turkey Writer\\img\\icon.ico')
+          entitlements_file=None , icon='img\\icon.ico')

@@ -1,6 +1,7 @@
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import QByteArray
 import json
+from config.icons import icons
 
 class IconDecoder:
     """Singleton Class handle decoding icons from base64
@@ -12,8 +13,6 @@ class IconDecoder:
 
     Methods
     -------
-    _loadIconsFromJson()
-        Loads the icons encode from json file as dictionary.
     _getEncodedIcon(iconKey)
         Get specific icon from encode dict
     getDecodedIcon(iconKey)
@@ -30,18 +29,7 @@ class IconDecoder:
 
     def __init__(self) -> None:
         if not hasattr(self, "_icons"):
-            self._icons = self._loadIconsFromJson()
-
-    def _loadIconsFromJson(self) -> dict:
-        """Loads the icons encode from json file as dictionary.
-
-        Returns
-        -------
-        dict
-            Dictionary hold all the icons encode
-        """
-        with open("./icons-encode.json") as iconsFile:
-            return json.load(iconsFile)["icons"]
+            self._icons = icons
 
     def _getEncodedIcon(self, iconKey: str) -> str:
         """Get specific icon from encode dict
