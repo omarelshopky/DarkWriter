@@ -28,8 +28,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         Is the disappearing feature are enable or not
     duringSavingProcess: bool
         Is the app is currently in saving process
-    reachMax: bool
-        If the user reach the maximum number of lines for a paragraph
     """
     def __init__(self, mainStack: QStackedWidget) -> None:
         super().__init__()
@@ -41,7 +39,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.wordsCount = [0]
         self.isDisappearable = True
         self.duringSavingProcess = False
-        self.reachMax = False
         self.setupUi(self)
         self._setupEvents()
         self._hideNavigation()
@@ -144,9 +141,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.textEdit.setPlainText('o\no')
         secondLine = self.textEdit.document().size().height()
         self.textEdit.clear()
-        self.maxLinesHeight = firstLine + 5 * (secondLine - firstLine)
-        self.textEdit.setMaximumHeight(self.maxLinesHeight)
-        self.textEdit.setMinimumHeight(self.maxLinesHeight)
+        maxLinesHeight = firstLine + 5 * (secondLine - firstLine)
+        self.textEdit.setMaximumHeight(maxLinesHeight)
+        self.textEdit.setMinimumHeight(maxLinesHeight)
 
     def _startTimers(self) -> None:
         """Start All needed timers"""
@@ -161,10 +158,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.wordDisappearTimer = QTimer()
         self.wordDisappearTimer.timeout.connect(lambda: self._disappearWord())
         self.wordDisappearTimer.start(3000)
-
-        self.checkLinesTimer = QTimer()
-        self.checkLinesTimer.timeout.connect(lambda: self._checkLines())
-        self.checkLinesTimer.start(10)
 
         self.fileHandler.enableAutosave()
 
@@ -405,7 +398,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             if (event.key() == Qt.Key_Backspace or event.key() == Qt.Key_Delete) and self.textEdit.hasFocus():
                 self.setContent()
 
-                if self.contentLines[index][-1] == '' and len(self.contentLines[index]) <= 1 and index != 0 and self.reachMax == False:
+                if self.contentLines[index][-1] == '' and len(self.contentLines[index]) <= 1 and index != 0:
                     self.contentLines.pop(index)
                     self.contentLines[index-1][-1] += ' '
                     self._previousParagraph(False)
@@ -416,23 +409,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             #     self.mainStack.close()
 
         return super().eventFilter(obj, event)
-
-    def _checkLines(self) -> None:
-        """Check that lines reach maximum"""
-        if self.textEdit.document().size().height() > self.maxLinesHeight:
-            index = int(self.currentParLbl.text())
-            # Remove the last character
-            self.reachMax = True
-            self.setContent()
-            lastChar = self.contentLines[index][-1][-1]
-            keyboard.press_and_release('backspace')
-            self._createNewParagraph()
-            self.contentLines[index][-1] = self.contentLines[index][-1][:-1]
-            self.contentLines[index+1][0] = lastChar
-            self.updateContent()
-            keyboard.press_and_release('right')
-        else:
-            self.reachMax = False
 
     def _createNewParagraph(self) -> None:
         """Create new paragraph"""
