@@ -179,32 +179,31 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def _updateProgressbar(self) -> None:
         """Update the progress value and restart the timer if not 100%"""
-        if int(self._updateProgressValue()) == 100:
+        wordsTyped = self._getWordsTyped()
+        self._checkBoosterGoal(wordsTyped)
+        progressPercent = self._getProgressPercent(wordsTyped)
+
+        if progressPercent >= 100:
             self._showEndSessionBtns()
             self.duringSavingProcess = True
             self.updateProgressTimer.stop()
+        else:
+            self.progressBar.setValue(progressPercent)
 
-    def _updateProgressValue(self) -> float:
-        """Update the progress bar value
+    def _getProgressPercent(self, wordsTyped: int) -> float:
+        """Get the current progress percent
 
         Returns
         -------
-        int
+        float
             progress value in percent
         """
-        wordsTyped = self._getWordsTyped()
-
         if self.blockingInTime:
             remain = self.progressTimer.remainingTime() / 60000
         else:
             remain = int(self.blockingAmount) - wordsTyped
 
-        amount = 100 - ((remain / int(self.blockingAmount)) * 100)
-
-        self.progressBar.setValue(amount)
-        self._checkBoosterGoal(wordsTyped)
-
-        return amount
+        return 100 - ((remain / int(self.blockingAmount)) * 100)
 
     def _startProgressTimer(self, timeInMin: str) -> None:
         """Start the progress timer for time blocking sessions
@@ -404,9 +403,9 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
                     self._previousParagraph(False)
                     self._setCursorAfterLastChar()
 
-            # if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
-            #     self.close()
-            #     self.mainStack.close()
+            if event.key() == Qt.Key_Escape and self.textEdit.hasFocus():
+                self.close()
+                self.mainStack.close()
 
         return super().eventFilter(obj, event)
 
