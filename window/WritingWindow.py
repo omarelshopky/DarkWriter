@@ -63,9 +63,33 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             writingAreaSize = WindowSizer().getWritingAreaSize()
             self.textEdit.setMinimumWidth(writingAreaSize[0])
             self.textEdit.setMaximumWidth(writingAreaSize[0])
-            self.textEdit.document().setDocumentMargin(writingAreaSize[1])
+            self._setTextAreaPadding(writingAreaSize[1])
         except:
-            self.textEdit.document().setDocumentMargin(90)
+            self._setTextAreaPadding(90)
+
+    def _setTextAreaPadding(self, padding: int) -> None:
+        """Set the writing area padding
+
+        Parameters
+        ----------
+        padding: int
+            The padding amount need to be set
+        """
+        self.textEdit.document().setDocumentMargin(padding)
+        self.textEdit.setStyleSheet(f"background-color: white; padding: {padding}px")
+
+    def _setTextAreaMaximumHeight(self) -> None:
+        """Calculate writing area's line height"""
+        self.textEdit.setPlainText('o')
+        firstLine = self.textEdit.document().size().height()
+        self.textEdit.clear()
+        self.textEdit.setPlainText('o\no')
+        secondLine = self.textEdit.document().size().height()
+        self.textEdit.clear()
+        maxLinesHeight = firstLine + 5 * (secondLine - firstLine)
+        self.textEdit.setMaximumHeight(maxLinesHeight)
+        self.textEdit.setMinimumHeight(maxLinesHeight)
+        self.textEdit.document().setDocumentMargin(0)
 
     def startBlockingSessions(self, filePath: str, isNewDraft: bool, blockingAttributes: dict) -> None:
         """start blocking session
@@ -87,7 +111,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self._setBlocking(blockingAttributes["blockingAmount"], blockingAttributes["isTimeBlocking"])
         self._setNumOfSessions(blockingAttributes["numOfSessions"])
         self.mainStack.setCurrentIndex(AppWindow.WRITING_WINDOW.value)
-        self._calculateMaximumHeight()
+        self._setTextAreaMaximumHeight()
         self._startTimers()
 
         if isNewDraft == False:
@@ -132,18 +156,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.numOfSessions = int(numOfSessions)
         self.currentSession = 1
         self._setSessionLabel()
-
-    def _calculateMaximumHeight(self) -> None:
-        """Calculate writing area's line height"""
-        self.textEdit.setPlainText('o')
-        firstLine = self.textEdit.document().size().height()
-        self.textEdit.clear()
-        self.textEdit.setPlainText('o\no')
-        secondLine = self.textEdit.document().size().height()
-        self.textEdit.clear()
-        maxLinesHeight = firstLine + 5 * (secondLine - firstLine)
-        self.textEdit.setMaximumHeight(maxLinesHeight)
-        self.textEdit.setMinimumHeight(maxLinesHeight)
 
     def _startTimers(self) -> None:
         """Start All needed timers"""
