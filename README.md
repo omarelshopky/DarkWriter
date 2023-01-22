@@ -19,6 +19,14 @@ A Stubborn text editor that will block other apps from distracting you until you
   - The typed words goal is dynamic. Change it as you want!
   - Ability to select folder contains images to use as boosters
 
+## Screenshots
+Option Menu
+![Option Menu](screenshots/Option%20Menu.png)
+
+
+Writing Screen
+![Writing Screen](screenshots/Writing%20Screen.png)
+
 ## Usage
 You can wether download the executable file or compile it yourself using the following command
 
