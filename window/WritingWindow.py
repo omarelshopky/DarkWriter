@@ -34,13 +34,11 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.mainStack = mainStack
         self.fileHandler = FileHandler(self)
         self._pathResolver = PathResolver()
-        self.loadedWords = 0
-        self.contentLines = []
-        self.wordsCount = [0]
-        self.isDisappearable = True
-        self.duringSavingProcess = False
         self.setupUi(self)
         self._setupEvents()
+
+    def setupUi(self, window):
+        super().setupUi(window)
         self._hideNavigation()
         self._setWritingAreaSize()
 
@@ -91,6 +89,22 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.textEdit.setMinimumHeight(maxLinesHeight)
         self.textEdit.document().setDocumentMargin(0)
 
+    def _initSession(self):
+        """Initialize session attributes"""
+        self.loadedWords = 0
+        self.contentLines = []
+        self.wordsCount = [0]
+        self.isDisappearable = True
+        self.duringSavingProcess = False
+
+    def _refreshSession(self):
+        """Refresh the session attributes to start new one"""
+        self._initSession()
+        self._updateFilePath()
+        self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
+        self.currentParLbl.setText("0")
+        self.textEdit.clear()
+
     def startBlockingSessions(self, filePath: str, isNewDraft: bool, blockingAttributes: dict) -> None:
         """start blocking session
 
@@ -103,7 +117,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         blockingAttributes: dict
             the blocking attributes like amount and is time or words count
         """
-        self._isNewDraft = isNewDraft
         self._boosterImageWidget = BoosterImageWidget(self)
         self._boosterImgSettings = SettingsReader().getBoosterImagesSettings()
         self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
@@ -112,6 +125,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self._setNumOfSessions(blockingAttributes["numOfSessions"])
         self.mainStack.setCurrentIndex(AppWindow.WRITING_WINDOW.value)
         self._setTextAreaMaximumHeight()
+        self._initSession()
         self._startTimers()
 
         if isNewDraft == False:
@@ -261,10 +275,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         if self._saveSession():
             self.currentSession += 1
             self._setSessionLabel()
-            self._updateFilePath()
-            self.loadedWords += self._getWordsTyped()
-            self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
-            self.duringSavingProcess = False
+            self._refreshSession()
             self._activateProgressBar()
 
     def _saveSession(self):
@@ -288,8 +299,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def _updateFilePath(self) -> None:
         """Update the file path with new one"""
-        if self._isNewDraft:
-            self._setFilePath(self._pathResolver.getNewFilePath())
+        self._setFilePath(self._pathResolver.getNewFilePath())
 
     def setContent(self) -> None:
         """Set writing area content according to current paragraph index"""
@@ -380,7 +390,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         cursor = self.textEdit.textCursor()
         cursor.setPosition(cursor.position() + position)
         self.textEdit.setTextCursor(cursor)
-    
+
     def _setCursorAfterLastChar(self) -> None:
         """Sets the cursor at the end of the text"""
         self._setCursor(self.textEdit.document().characterCount() - 1)
