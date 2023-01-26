@@ -3,7 +3,7 @@ from PyQt5.QtGui import QIntValidator
 from PyQt5.QtWidgets import QDialog, QMainWindow, QFileDialog
 from designPy.settingsDialogUI import Ui_SettingsDialog
 from util.ImagesChecker import ImagesChecker
-from util.SettingsReader import SettingsReader
+from util.SettingsReader import SettingsReader, IS_ENABLED, WORD_DISAPPEARING_INTERVAL, BOOSTER_IMAGES_WORDS_GOAL, BOOSTER_IMAGES_FOLDER_PATH
 
 class SettingsDialog(QDialog, Ui_SettingsDialog):
     """Booster images feature settings dialog
@@ -49,13 +49,23 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
     def _enableInputValidation(self) -> None:
         """Make numerical input box accept only integers"""
         self.BIwordCountInput.setValidator(QIntValidator())
+        self.WDintervalInput.setValidator(QIntValidator())
 
     def _loadSettings(self) -> None:
         """Loads the settings to the dialog inputs"""
+        self._loadBoosterImageSettings()
+        self._loadWordDisappearingSettings()
+
+    def _loadBoosterImageSettings(self) -> None:
         boosterImgSettings = self.settingsReader.getBoosterImagesSettings()
-        self.BoosterImgSettingsGBox.setChecked(boosterImgSettings["enabled"])
-        self.BIwordCountInput.setText(str(boosterImgSettings["words-goal"]))
-        self.BImageFolderPathLbl.setText(boosterImgSettings["images-folder"])
+        self.BoosterImgSettingsGBox.setChecked(boosterImgSettings[IS_ENABLED])
+        self.BIwordCountInput.setText(str(boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]))
+        self.BImageFolderPathLbl.setText(boosterImgSettings[BOOSTER_IMAGES_FOLDER_PATH])
+
+    def _loadWordDisappearingSettings(self) -> None:
+        wordDisappearSettings = self.settingsReader.getWordDisappearingSettings()
+        self.WordDisSettingsGBox.setChecked(wordDisappearSettings[IS_ENABLED])
+        self.WDintervalInput.setText(str(wordDisappearSettings[WORD_DISAPPEARING_INTERVAL]))
 
     def _browseImageFolder(self) -> None:
         """Open browse folder dialog to get images folder"""
@@ -72,6 +82,10 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
     def _saveSettings(self) -> None:
         """Saves the settings modified in dialog"""
+        self._saveBoosterImageSettings()
+        self._saveWordDisappearingSettings()
+
+    def _saveBoosterImageSettings(self) -> None:
         isEnabled = self._getBoosterImgIsEnabled()
         wordGoal = self._getBoosterImgWordGoal()
         imgsFolder = self._getBoosterImgFolder()
@@ -79,6 +93,11 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
 
         if wordGoal and imgsFolder and imgsCount > 0:
             self.settingsReader.setBoosterImagesSettings(isEnabled, int(wordGoal), imgsFolder)
+
+    def _saveWordDisappearingSettings(self) -> None:
+        isEnabled = self._getWordDisappearingIsEnabled()
+        interval = self._getWordDisappearingInterval()
+        self.settingsReader.setWordDisappearingSettings(isEnabled, interval)
 
     def _getBoosterImgIsEnabled(self) -> bool:
         """Getter for booster image is enabled
@@ -101,8 +120,8 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
         wordGoal = self.BIwordCountInput.text()
 
         if not wordGoal:
-            wordGoal = self.settingsReader.getBoosterImagesSettings()["words-goal"]
-            self.BIwordCountInput.setText(wordGoal)
+            wordGoal = self.settingsReader.getBoosterImagesSettings()[BOOSTER_IMAGES_WORDS_GOAL]
+            self.BIwordCountInput.setText(str(wordGoal))
 
         return wordGoal
 
@@ -115,3 +134,29 @@ class SettingsDialog(QDialog, Ui_SettingsDialog):
             Booster image folder path
         """
         return self.BImageFolderPathLbl.text()
+
+    def _getWordDisappearingIsEnabled(self) -> bool:
+        """Getter for word disappearing is enabled
+
+        Returns
+        -------
+        bool:
+            word disappearing feature is enabled or not
+        """
+        return self.WordDisSettingsGBox.isChecked()
+
+    def _getWordDisappearingInterval(self) -> int:
+        """Getter for word disappearing interval
+
+        Returns
+        -------
+        int:
+            word disappearing interval
+        """
+        interval = self.WDintervalInput.text()
+
+        if not interval:
+            interval = self.settingsReader.getWordDisappearingSettings()[WORD_DISAPPEARING_INTERVAL]
+            self.WDintervalInput.setText(str(interval))
+
+        return int(interval)
