@@ -4,7 +4,7 @@ import keyboard
 from cenum.AppWindow import AppWindow
 from designPy.writingWindowUI import Ui_WritingWindow
 from util.FileHandler import FileHandler
-from util.SettingsReader import SettingsReader, BOOSTER_IMAGES_WORDS_GOAL, BOOSTER_IMAGES_IS_ENABLED
+from util.SettingsReader import SettingsReader, BOOSTER_IMAGES, WORD_DISAPPEARING, BOOSTER_IMAGES_WORDS_GOAL, IS_ENABLED, WORD_DISAPPEARING_INTERVAL
 from util.PathResolver import PathResolver
 from util.WindowSizer import WindowSizer
 from widget.BoosterImageWidget import BoosterImageWidget
@@ -101,7 +101,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         """Refresh the session attributes to start new one"""
         self._initSession()
         self._updateFilePath()
-        self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
+        self._currentBoosterGoal = self._settings[BOOSTER_IMAGES][BOOSTER_IMAGES_WORDS_GOAL]
         self.currentParLbl.setText("0")
         self.textEdit.clear()
 
@@ -118,8 +118,11 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
             the blocking attributes like amount and is time or words count
         """
         self._boosterImageWidget = BoosterImageWidget(self)
-        self._boosterImgSettings = SettingsReader().getBoosterImagesSettings()
-        self._currentBoosterGoal = self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
+        self._settings = {
+            BOOSTER_IMAGES : SettingsReader().getBoosterImagesSettings(),
+            WORD_DISAPPEARING: SettingsReader().getWordDisappearingSettings()
+        }
+        self._currentBoosterGoal = self._settings[BOOSTER_IMAGES][BOOSTER_IMAGES_WORDS_GOAL]
         self._setFilePath(filePath)
         self._setBlocking(blockingAttributes["blockingAmount"], blockingAttributes["isTimeBlocking"])
         self._setNumOfSessions(blockingAttributes["numOfSessions"])
@@ -183,13 +186,13 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
         self.wordDisappearTimer = QTimer()
         self.wordDisappearTimer.timeout.connect(lambda: self._disappearWord())
-        self.wordDisappearTimer.start(3000)
+        self.wordDisappearTimer.start(int(self._settings[WORD_DISAPPEARING][WORD_DISAPPEARING_INTERVAL]) * 1000)
 
         self.fileHandler.enableAutosave()
 
     def _restartWordDisappearTimer(self):
         """Restart the word disappear timer"""
-        self.wordDisappearTimer.start(3000)
+        self.wordDisappearTimer.start(int(self._settings[WORD_DISAPPEARING][WORD_DISAPPEARING_INTERVAL]) * 1000)
 
     def _activateProgressBar(self) -> None:
         """Active progress bar timer"""
@@ -356,7 +359,7 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
 
     def _disappearWord(self) -> None:
         """Remove the last word from the content"""
-        if self.isDisappearable and not self.duringSavingProcess:
+        if self.isDisappearable and not self.duringSavingProcess and self._settings[WORD_DISAPPEARING][IS_ENABLED]:
             self.setContent()
             index = int(self.currentParLbl.text())
 
@@ -482,6 +485,6 @@ class WritingWindow(QMainWindow, Ui_WritingWindow):
         self.sessionLbl.setText(f"Session {self.currentSession} of {self.numOfSessions}")
 
     def _checkBoosterGoal(self, wordsTyped):
-        if self._boosterImgSettings[BOOSTER_IMAGES_IS_ENABLED] and wordsTyped >= self._currentBoosterGoal:
+        if self._settings[BOOSTER_IMAGES][IS_ENABLED] and wordsTyped >= self._currentBoosterGoal:
             self._boosterImageWidget.display()
-            self._currentBoosterGoal += self._boosterImgSettings[BOOSTER_IMAGES_WORDS_GOAL]
+            self._currentBoosterGoal += self._settings[BOOSTER_IMAGES][BOOSTER_IMAGES_WORDS_GOAL]

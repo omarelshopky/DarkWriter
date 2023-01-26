@@ -2,16 +2,18 @@ import json
 from config.settings import settings
 import util.PathResolver as PathResolver
 
-USER_SETTINGS_KEYS = ["booster-images"]
+USER_SETTINGS_KEYS = ["booster-images", "word-disappearing"]
 APP_DIR_NAME = "app-dir-name"
 SAVING_STATUS_MESSAGE = "saving-status-message"
 WRITING_AREA_SIZE = "writing-area-size"
 AUTOSAVE_PERIOD = "autosave-period"
 USER_SETTINGS_FILE_NAME = "user-settings-file-name"
+IS_ENABLED = "enabled"
 BOOSTER_IMAGES = "booster-images"
-BOOSTER_IMAGES_IS_ENABLED = "enabled"
 BOOSTER_IMAGES_WORDS_GOAL = "words-goal"
 BOOSTER_IMAGES_FOLDER_PATH = "images-folder"
+WORD_DISAPPEARING = "word-disappearing"
+WORD_DISAPPEARING_INTERVAL = "interval"
 
 class SettingsReader:
     """Singleton Class handle reading app settings from json file
@@ -47,6 +49,8 @@ class SettingsReader:
         Get auto save period specified in settings
     getBoosterImagesSettings()
         Get auto save period specified in settings
+    getWordDisappearingSettings()
+        Get word disappearing settings
     """
     _instance = None
 
@@ -202,8 +206,36 @@ class SettingsReader:
         self._setSettings(
             BOOSTER_IMAGES,
             {
-                BOOSTER_IMAGES_IS_ENABLED: isEnabled,
+                IS_ENABLED: isEnabled,
                 BOOSTER_IMAGES_WORDS_GOAL: wordGoal,
                 BOOSTER_IMAGES_FOLDER_PATH: imgFolder
+            }
+        )
+
+    def getWordDisappearingSettings(self) -> dict:
+        """Get word disappearing settings
+
+        Returns
+        -------
+        dict
+            Dictionary hold settings related to word disappearing feature
+        """
+        return self._getSettings()[WORD_DISAPPEARING]
+
+    def setWordDisappearingSettings(self, isEnabled: bool, interval: int) -> None:
+        """Sets word disappearing settings
+
+        Parameters
+        ----------
+        isEnabled: bool
+            Is the word disappearing feature is enabled or not
+        interval: int
+            the number of seconds between each word removal
+        """
+        self._setSettings(
+            WORD_DISAPPEARING,
+            {
+                IS_ENABLED: isEnabled,
+                WORD_DISAPPEARING_INTERVAL: interval
             }
         )

@@ -17,6 +17,10 @@ settings = {
         "words-goal" : 100,
         "images-folder" : ""
     },
+    "word-disappearing" : {
+        "enabled" : True,
+        "interval": 3
+    },
     "writing-area-size" : {
         "1920" : { "1080" : [928, 102] },
         "1680" : { "1050" : [868, 102] },
